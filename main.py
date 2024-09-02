@@ -6,7 +6,7 @@ from typing import Optional
 app = FastAPI()
 
 # Initialize Firebase Admin SDK
-cred = credentials.Certificate("candv-bar-firebase-adminsdk-i73u1-eca35cfad9.json")
+cred = credentials.Certificate("/Users/mariavictoriaheine/PID/candv-bar-firebase-adminsdk-i73u1-eca35cfad9.json")
 firebase_app = initialize_app(cred)
 db = firestore.client()
 
