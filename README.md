@@ -11,3 +11,4 @@ Metacello new
    githubUser: 'uca-argentina' project: 'project-template' commitish: 'master' path: 'repository';
    load: 'development'.
 ```
+Lo corro con: fastapi dev main.py

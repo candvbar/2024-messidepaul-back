@@ -1,11 +1,20 @@
 from fastapi import FastAPI
-from app.api import router as user_router
+from fastapi.middleware.cors import CORSMiddleware
+from app.api import router
 
 app = FastAPI()
 
-# Incluye las rutas del API de usuario
-app.include_router(user_router, prefix="/user")
+origins = [
+    "http://localhost:4201",  # URL de tu aplicación Angular
+]
 
-@app.get("/")
-def root():
-    return {"message": "Hello World"}
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],  # Permitir todos los métodos HTTP
+    allow_headers=["*"],  # Permitir todos los encabezados
+)
+
+# Incluir las rutas de tu API
+app.include_router(router)
