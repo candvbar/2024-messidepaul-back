@@ -1,3 +1,4 @@
+from datetime import date
 from pydantic import BaseModel
 
 # Modelo para iniciar sesión
@@ -7,9 +8,9 @@ class UserLogin(BaseModel):
 
 # Modelo para registrar un nuevo usuario
 class UserRegister(BaseModel):
+    uid: str
     name: str
-    email: str
-    password: str
+    birthday: str
 
 # Modelo para recuperación de contraseña
 class UserForgotPassword(BaseModel):

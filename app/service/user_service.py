@@ -1,12 +1,14 @@
 from app.db.firebase import db
-from firebase_admin import firestore
 
 # Crear un nuevo usuario en Firestore
 def create_user(user_data):
     try:
-        new_user_ref = db.collection('users').document()
-        new_user_ref.set(user_data)
-        return {"message": "User added successfully", "id": new_user_ref.id}
+        doc_ref = db.collection("users").document(user_data.uid)
+        doc_ref.set({
+            "name": user_data.name,
+            "birthday": user_data.birthday
+        })
+        return {"message": "User data saved successfully"}
     except Exception as e:
         return {"error": str(e)}
 

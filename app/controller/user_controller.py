@@ -4,23 +4,13 @@ from fastapi import HTTPException
 
 # Controlador para iniciar sesión
 def login(user: UserLogin):
-    '''db_user = get_user_by_email(user.email)
-    if db_user and db_user["password"] == user.password:
-        return {"message": "Login successful"}
-    else:
-        raise HTTPException(status_code=401, detail="Invalid email or password")'''
     return {"message": "Login successful"}
 # Controlador para registrar un nuevo usuario
 def register(user: UserRegister):
-    existing_user = get_user_by_email(user.email)
-    if existing_user:
-        raise HTTPException(status_code=400, detail="Email already registered")
-    
-    user_data = user.dict()
-    response = create_user(user_data)
+    response = create_user(user)
     if "error" in response:
         raise HTTPException(status_code=500, detail=response["error"])
-    return {"message": "User registered successfully", "user_id": response["id"]}
+    return {"message": "User registered successfully"}
 
 # Controlador para recuperación de contraseña
 def handle_forgot_password(user: UserForgotPassword):
