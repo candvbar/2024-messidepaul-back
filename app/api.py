@@ -6,6 +6,10 @@ from app.controller.product_controller import register_new_product, get_products
 
 router = APIRouter()
 
+@router.get("/")
+async def root():
+    return "Server is running"
+
 # Ruta para iniciar sesión
 @router.post("/login/")
 async def login_user(user: UserLogin):

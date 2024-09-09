@@ -3,8 +3,7 @@ from app.models.product import Product
 from fastapi import HTTPException
 
 def register_new_product(product: Product):
-    product_data = product.dict()
-    response = create_product(product_data)
+    response = create_product(product.dict())
     if "error" in response:
         raise HTTPException(status_code=500, detail=response["error"])
     return {"message": "Product registered successfully", "product_id": response["id"]}

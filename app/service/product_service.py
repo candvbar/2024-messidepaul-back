@@ -1,4 +1,5 @@
 from app.db.firebase import db
+
 def create_product(product_data):
     try:
         new_product_ref = db.collection('products').document()
@@ -15,12 +16,12 @@ def products():
 
         for product in products:
             product_dict = product.to_dict()
-            product_dict['id'] = product.id  # Agrega el id de cada producto
+            product_dict['id'] = product.id
             product_list.append(product_dict)
             
         return {"products": product_list, "message": "Products get successful"}
     except Exception as e:
-        return {"error": str(e)}
+        return {"error": str(e)}, 500
 
 def update_product_newprice(product_id: str, new_price: float):
     try:
