@@ -28,3 +28,16 @@ def get_user_by_email(email):
 def forgot_password(email):
     # Simulamos que mandamos un correo de recuperación
     return {"message": f"Password reset link sent to {email}"}
+
+def user_by_id(uid):
+    try:
+        # Referencia al documento del usuario
+        user_ref = db.collection('users').document(uid)
+        user_doc = user_ref.get()  # Obtener el documento
+        
+        if user_doc.exists:  # Verificar si el documento existe
+            return user_doc.to_dict()  # Retornar los datos como un diccionario
+        else:
+            return {"error": "User not found"}
+    except Exception as e:
+        return {"error": str(e)}
