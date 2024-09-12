@@ -26,7 +26,7 @@ def update_product_description(product_id: str, new_description: str):
         raise HTTPException(status_code=500, detail=response["error"])
     return {"message": "Product description updated successfully"}
 
-def delete(product_id: str):
+def delete_product_by_id(product_id: str):
     response = delete_product(product_id)
     if "error" in response:
         raise HTTPException(status_code=500, detail=response["error"])

@@ -1,10 +1,7 @@
-from app.service.user_service import create_user, get_user_by_email, forgot_password, user_by_id
+from app.service.user_service import create_user, get_user_by_email, forgot_password, user_by_id, delete_user
 from app.models.user import UserLogin, UserRegister, UserForgotPassword
 from fastapi import HTTPException
 
-# Controlador para iniciar sesión
-def login(user: UserLogin):
-    return {"message": "Login successful"}
 # Controlador para registrar un nuevo usuario
 def register(user: UserRegister):
     response = create_user(user)
@@ -25,3 +22,9 @@ def get_user_by_id(uid: str):
     if "error" in response:
         raise HTTPException(status_code=500, detail=response["error"])
     return response
+
+def delete_user_by_id(uid: str):
+    response = delete_user(uid)
+    if "error" in response:
+        raise HTTPException(status_code=500, detail=response["error"])
+    return {"message": "Product deleted successfully"}

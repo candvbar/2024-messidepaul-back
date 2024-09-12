@@ -1,8 +1,8 @@
 from fastapi import APIRouter
 from app.models.user import UserLogin, UserRegister, UserForgotPassword
 from app.models.product import Product
-from app.controller.user_controller import login, register, handle_forgot_password, get_user_by_id
-from app.controller.product_controller import register_new_product, get_products, update_product_price, update_product_description, delete, get_product_by_id
+from app.controller.user_controller import register, handle_forgot_password, get_user_by_id, delete_user_by_id
+from app.controller.product_controller import register_new_product, get_products, update_product_price, update_product_description, delete_product_by_id, get_product_by_id
 
 router = APIRouter()
 
@@ -11,9 +11,9 @@ async def root():
     return "Server is running"
 
 # Ruta para iniciar sesión
-@router.post("/login/")
+'''@router.post("/login/")
 async def login_user(user: UserLogin):
-    return login(user)
+    return login(user)'''
 
 # Ruta para registrar un nuevo usuario
 @router.post("/register/")
@@ -43,7 +43,7 @@ async def update_description(product_id: str, new_description: str):
 
 @router.delete("/products/{product_id}")
 async def delete_product(product_id: str):
-    return delete(product_id)
+    return delete_product_by_id(product_id)
 
 @router.get("/products/{product_id}")
 async def get_product(product_id: str):
@@ -52,3 +52,7 @@ async def get_product(product_id: str):
 @router.get("/users/{uid}")
 async def get_user(uid: str):
     return get_user_by_id(uid)
+
+@router.delete("/users/{uid}")
+async def delete_user(uid: str):
+    return delete_user_by_id(uid)

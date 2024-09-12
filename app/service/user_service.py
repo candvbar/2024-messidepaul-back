@@ -41,3 +41,11 @@ def user_by_id(uid):
             return {"error": "User not found"}
     except Exception as e:
         return {"error": str(e)}
+
+def delete_user(uid):
+    try:
+        user_ref = db.collection('users').document(uid)
+        user_ref.delete()
+        return {"message": "User deleted successfully"}
+    except Exception as e:
+        return {"error": str(e)}
