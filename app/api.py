@@ -1,7 +1,7 @@
 from fastapi import APIRouter
-from app.models.user import UserLogin, UserRegister, UserForgotPassword
+from app.models.user import UserLogin, UserRegister, UserForgotPassword, TokenData
 from app.models.product import Product
-from app.controller.user_controller import register, handle_forgot_password, get_user_by_id, delete_user_by_id
+from app.controller.user_controller import login, register, handle_forgot_password, get_user_by_id, delete_user_by_id, token
 from app.controller.product_controller import register_new_product, get_products, update_product_price, update_product_description, delete_product_by_id, get_product_by_id
 
 router = APIRouter()
@@ -11,9 +11,13 @@ async def root():
     return "Server is running"
 
 # Ruta para iniciar sesión
-'''@router.post("/login/")
+@router.post("/login/")
 async def login_user(user: UserLogin):
-    return login(user)'''
+    return login(user)
+
+@router.post("/verify-token/")
+async def verify_token(token_data: TokenData):
+    return token(token_data)
 
 # Ruta para registrar un nuevo usuario
 @router.post("/register/")

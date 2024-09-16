@@ -15,3 +15,7 @@ class UserRegister(BaseModel):
 # Modelo para recuperación de contraseña
 class UserForgotPassword(BaseModel):
     email: str
+
+class TokenData(BaseModel):
+    id_token: str
+

@@ -19,9 +19,10 @@ def products():
             product_dict['id'] = product.id
             product_list.append(product_dict)
             
-        return {"products": product_list, "message": "Products get successful"}
+        return {"products": product_list, "message": "Products retrieved successfully"}
     except Exception as e:
-        return {"error": str(e)}, 500
+        return {"error": str(e)}  # Removed the status code tuple
+
 
 def update_product_newprice(product_id: str, new_price: float):
     try:
@@ -34,31 +35,34 @@ def update_product_newprice(product_id: str, new_price: float):
 
 def update_product_newdescription(product_id, new_description):
     try:
-        # Referencia al documento del producto que se va a actualizar
         product_ref = db.collection('products').document(product_id)
-
-        # Actualización solo del campo 'description'
-        product_ref.update({
-            'description': new_description
-        })
-
+        product_ref.update({'description': new_description})
         return {"message": "Product description updated successfully"}
     except Exception as e:
         return {"error": str(e)}
 
-def delete_product(product_id):
-    try:
-        product_ref = db.collection('products').document(product_id)
-        product_ref.delete()
-        return {"message": "Product deleted successfully"}
-    except Exception as e:
-        return {"error": str(e)}
 
-def product_by_id(product_id):
+def delete_product(product_id: str):
+    product_ref = db.collection('products').document(product_id)
+    product_doc = product_ref.get()
+    if not product_doc.exists:
+        raise ValueError("Product not found")
+    product_ref.delete()
+    return {"message": "Product deleted successfully"}
+
+
+def product_by_id(product_id: str):
     try:
-        # Referencia al documento del producto
+        # Retrieve the document reference
         product_ref = db.collection('products').document(product_id)
-        #product_ref.get()
-        return {"product": product_ref.id, "message": "Product get successful"}
+        product_doc = product_ref.get()
+
+        if not product_doc.exists:
+            return {"error": "Product not found"}
+        
+        product_data = product_doc.to_dict()
+        product_data['id'] = product_id
+        
+        return {"product": product_data, "message": "Product retrieved successfully"}
     except Exception as e:
         return {"error": str(e)}

@@ -27,10 +27,14 @@ def update_product_description(product_id: str, new_description: str):
     return {"message": "Product description updated successfully"}
 
 def delete_product_by_id(product_id: str):
-    response = delete_product(product_id)
-    if "error" in response:
-        raise HTTPException(status_code=500, detail=response["error"])
-    return {"message": "Product deleted successfully"}
+    try:
+        response = delete_product(product_id)
+        return response
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Internal Server Error: {str(e)}")
+
 
 def get_product_by_id(product_id: str):
     response = product_by_id(product_id)

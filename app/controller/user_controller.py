@@ -1,6 +1,28 @@
 from app.service.user_service import create_user, get_user_by_email, forgot_password, user_by_id, delete_user
-from app.models.user import UserLogin, UserRegister, UserForgotPassword
+from app.models.user import TokenData, UserLogin, UserRegister, UserForgotPassword
+from firebase_admin import auth
 from fastapi import HTTPException
+
+def login(user: UserLogin):
+    try:
+        # Verificar las credenciales del usuario
+        user = auth.get_user_by_email(user.email)
+        return {"message": "Usuario autenticado exitosamente", "user_id": user.uid}
+    except firebase_admin.auth.AuthError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+def token(token_data: TokenData):
+    try:
+        # Verificar el token enviado por el cliente
+        decoded_token = auth.verify_id_token(token_data.id_token)
+        uid = decoded_token['uid']
+        return {"message": "Token verificado", "user_id": uid}
+    except firebase_admin.auth.AuthError as e:
+        raise HTTPException(status_code=400, detail="Token no válido o expirado")
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
 
 # Controlador para registrar un nuevo usuario
 def register(user: UserRegister):
