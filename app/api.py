@@ -29,9 +29,10 @@ async def register_user(user: UserRegister):
 async def forgot_password_user(user: UserForgotPassword):
     return handle_forgot_password(user)
 
+#validaciones
 @router.post("/register-product")
 async def register_product(product: Product):
-    return register_new_product(product)
+    return register_new_product(product) 
 
 @router.get("/products")
 async def products():

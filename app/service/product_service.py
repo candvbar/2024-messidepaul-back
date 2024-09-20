@@ -21,7 +21,7 @@ def products():
             
         return {"products": product_list, "message": "Products retrieved successfully"}
     except Exception as e:
-        return {"error": str(e)}  # Removed the status code tuple
+        return {"error": str(e)}  
 
 
 def update_product_newprice(product_id: str, new_price: float):
