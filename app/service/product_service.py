@@ -21,7 +21,7 @@ def products():
             
         return {"products": product_list, "message": "Products retrieved successfully"}
     except Exception as e:
-        return {"error": str(e)}  
+        return {"error": str(e)}  # Removed the status code tuple
 
 
 def update_product_newprice(product_id: str, new_price: float):
@@ -35,12 +35,17 @@ def update_product_newprice(product_id: str, new_price: float):
 
 def update_product_newdescription(product_id, new_description):
     try:
+        # Referencia al documento del producto que se va a actualizar
         product_ref = db.collection('products').document(product_id)
-        product_ref.update({'description': new_description})
+
+        # Actualización solo del campo 'description'
+        product_ref.update({
+            'description': new_description
+        })
+
         return {"message": "Product description updated successfully"}
     except Exception as e:
         return {"error": str(e)}
-
 
 def delete_product(product_id: str):
     product_ref = db.collection('products').document(product_id)

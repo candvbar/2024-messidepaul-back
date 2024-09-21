@@ -32,6 +32,7 @@ async def forgot_password_user(user: UserForgotPassword):
 #validaciones
 @router.post("/register-product")
 async def register_product(product: Product):
+    print(product)
     return register_new_product(product) 
 
 @router.get("/products")
