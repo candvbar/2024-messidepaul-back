@@ -27,7 +27,7 @@ def products():
 def update_product_newprice(product_id: str, new_price: float):
     try:
         product_ref = db.collection('products').document(product_id)
-        product_ref.update({"product_price": new_price})
+        product_ref.update({"price": new_price})
         return {"message": "Product price updated successfully"}
     except Exception as e:
         return {"error": str(e)}
