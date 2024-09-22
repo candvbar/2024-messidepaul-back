@@ -39,11 +39,11 @@ async def register_product(product: Product):
 async def products():
     return get_products()
 
-@router.put("/products/{product_id}/price")
+@router.put("/products/price/{product_id}/{new_price}")
 async def update_price(product_id: str, new_price: float):
     return update_product_price(product_id, new_price)
 
-@router.put("/products/{product_id}/description")
+@router.put("/products/description/{product_id}/{new_description}")
 async def update_description(product_id: str, new_description: str):
     return update_product_description(product_id, new_description)
 
