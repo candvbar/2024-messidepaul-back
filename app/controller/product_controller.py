@@ -6,8 +6,8 @@ from fastapi import HTTPException
 def register_new_product(product: Product):
     # Validación de precio no numérico y negativo
     if isinstance(product.price, (int, float)):
-        if product.price < 0:
-            raise HTTPException(status_code=400, detail="Price cannot be negative")
+        if product.price <= 0:
+            raise HTTPException(status_code=400, detail="Price cannot be negative or zero")
     else:
         raise HTTPException(status_code=400, detail="Price must be a number")
     
@@ -51,14 +51,11 @@ def get_product_by_id(product_id: str):
     try:
         response = product_by_id(product_id)
         if "error" in response:
-            raise HTTPException(status_code=404, detail=response["error"])  # Lanzar 404 si el producto no se encuentra
-        
-        return response  # Si no hay error, devolver la respuesta normal
-
+            raise HTTPException(status_code=404, detail=response["error"])
+        return response
     except HTTPException as http_exception:
-        raise http_exception  # Propagar excepciones HTTP
+        raise http_exception 
     except Exception as e:
-        # Lanzar 500 para otros errores
         raise HTTPException(status_code=500, detail=str(e))
 
 

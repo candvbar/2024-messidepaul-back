@@ -15,6 +15,19 @@ class TestProductController:
 
         assert response["message"] == "Product registered successfully"
         assert response["id"] == "123"
+    
+    @patch('app.controller.product_controller.create_product')
+    def test_register_new_product_creation_failure(self, mock_create_product):
+        # Simulate an error response from create_product
+        mock_create_product.return_value = {"error": "Failed to create product"}
+
+        product = create_test_product()  # Assuming this creates a valid product
+
+        with pytest.raises(HTTPException) as exc_info:
+            register_new_product(product)
+
+        assert exc_info.value.status_code == 500
+        assert exc_info.value.detail == "Failed to create product"
 
 
     @patch('app.controller.product_controller.create_product')
@@ -25,7 +38,17 @@ class TestProductController:
             register_new_product(product)
 
         assert exc_info.value.status_code == 400
-        assert exc_info.value.detail == "Price cannot be negative"
+        assert exc_info.value.detail == "Price cannot be negative or zero"
+    
+    @patch('app.controller.product_controller.create_product')
+    def test_register_new_product_string_price(self, mock_create_product):
+        product = Product(name='Product Test', price="holaaaa", description='This is a test product', category=1)
+
+        with pytest.raises(HTTPException) as exc_info:
+            register_new_product(product)
+
+        assert exc_info.value.status_code == 400
+        assert exc_info.value.detail == "Price must be a number"
 
     @patch('app.controller.product_controller.products')
     def test_get_products_success(self, mock_products):
@@ -112,3 +135,24 @@ class TestProductController:
         assert exc_info.value.status_code == 404
         assert "Product not found" in str(exc_info.value.detail)
 
+    @patch('app.controller.product_controller.delete_product')
+    def test_delete_product_by_id_failure_general_exception(self, mock_delete_product):
+        # Simulate a general exception being raised by delete_product
+        mock_delete_product.side_effect = Exception("Unexpected error occurred")
+
+        with pytest.raises(HTTPException) as exc_info:
+            delete_product_by_id("valid_product_id")
+
+        assert exc_info.value.status_code == 500
+        assert exc_info.value.detail == "Unexpected error occurred"
+
+    @patch('app.controller.product_controller.product_by_id')
+    def test_get_product_by_id_failure_general_exception(self, mock_product_by_id):
+        # Simulate a general exception being raised by product_by_id
+        mock_product_by_id.side_effect = Exception("Unexpected error occurred")
+
+        with pytest.raises(HTTPException) as exc_info:
+            get_product_by_id("valid_product_id")
+
+        assert exc_info.value.status_code == 500
+        assert exc_info.value.detail == "Unexpected error occurred"
