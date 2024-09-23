@@ -156,3 +156,23 @@ class TestProductController:
 
         assert exc_info.value.status_code == 500
         assert exc_info.value.detail == "Unexpected error occurred"
+
+    @patch('app.controller.product_controller.category_exists')
+    @patch('app.controller.product_controller.create_product')
+    def test_register_new_product_category_not_exist(self, mock_create_product, mock_category_exists):
+        # Simulamos que la categoría no existe
+        mock_category_exists.return_value = False
+
+        # Creamos un producto de prueba con una categoría inexistente
+        test_product = create_test_product()
+
+        # Verificamos que se lanza el HTTPException con el mensaje adecuado
+        with pytest.raises(HTTPException) as exc_info:
+            register_new_product(test_product)
+        
+        # Aseguramos que el código de estado es 400 y el mensaje es "Category does not exist"
+        assert exc_info.value.status_code == 400
+        assert exc_info.value.detail == "Category does not exist"
+
+        # Verificamos que no se haya llamado a 'create_product' ya que la categoría es inválida
+        mock_create_product.assert_not_called()

@@ -1,8 +1,10 @@
 from fastapi import APIRouter
 from app.models.user import UserLogin, UserRegister, UserForgotPassword, TokenData
 from app.models.product import Product
+from app.models.category import Category
 from app.controller.user_controller import login, register, handle_forgot_password, get_user_by_id, delete_user_by_id, token
 from app.controller.product_controller import register_new_product, get_products, update_product_price, update_product_description, delete_product_by_id, get_product_by_id
+from app.controller.category_controller import delete_category_controller, get_all_categories, get_category_by_id_controller, register_new_category, update_category_name_controller
 
 router = APIRouter()
 
@@ -15,10 +17,12 @@ async def root():
 async def login_user(user: UserLogin):
     return login(user)
 
+
 @router.post("/verify-token/")
 async def verify_token(token_data: TokenData):
     return token(token_data)
 
+#------------------------USER--------------------------
 # Ruta para registrar un nuevo usuario
 @router.post("/register/")
 async def register_user(user: UserRegister):
@@ -28,6 +32,8 @@ async def register_user(user: UserRegister):
 @router.post("/forgot-password/")
 async def forgot_password_user(user: UserForgotPassword):
     return handle_forgot_password(user)
+
+#------------------------PRODUCTO--------------------------
 
 #validaciones
 @router.post("/register-product")
@@ -62,3 +68,25 @@ async def get_user(uid: str):
 @router.delete("/users/{uid}")
 async def delete_user(uid: str):
     return delete_user_by_id(uid)
+
+@router.post("/register-category")
+async def register_category(category: Category):
+    return register_new_category(category)
+
+#------------------------CATEGORIA--------------------------
+
+@router.get("/categories")
+async def categories():
+    return get_all_categories()
+
+@router.get("/categories/{category_id}")
+async def get_category(category_id: str):
+    return get_category_by_id_controller(category_id)
+
+@router.delete("/categories/{category_id}")
+async def delete_category(category_id: str):
+    return delete_category_controller(category_id)
+
+@router.put("/categories/name/{category_id}/{new_name}")
+async def update_category_name(category_id: str, new_name: str):
+    return update_category_name_controller(category_id, new_name)
