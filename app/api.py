@@ -5,7 +5,7 @@ from app.models.category import Category
 from app.controller.user_controller import login, register, handle_forgot_password, get_user_by_id, delete_user_by_id, token
 from app.controller.product_controller import register_new_product, get_products, update_product_price, update_product_description, delete_product_by_id, get_product_by_id
 from app.controller.category_controller import delete_category_controller, get_all_categories, get_category_by_id_controller, register_new_category, update_category_name_controller
-
+from app.controller.table_controller import get_tables_controller
 router = APIRouter()
 
 @router.get("/")
@@ -98,3 +98,8 @@ async def update_category_name(category_id: str, new_name: str):
 '''@router.get("/default-categories")
 async def get_default_categories():
     return get_default_categories_controller()'''
+
+#-----------------TABLES------------------------
+@router.get("/tables")
+async def tables():
+    return get_tables_controller()
