@@ -70,8 +70,6 @@ def update_category_name(category_id: str, new_name: str):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-from app.db.firebase import db
-
 def get_categories():
     """
     Servicio para obtener todas las categorías desde Firebase.
@@ -141,4 +139,17 @@ def category_exists(category_id: int) -> bool:
     except Exception as e:
         raise Exception(f"Error: {str(e)}")
 
-
+'''def get_default_categories_service():
+    """
+    Servicio para obtener todas las categorías de tipo 'Default' desde Firebase.
+    """
+    try:
+        categories_ref = db.collection('category').where('type', '==', 'Default').stream()
+        default_categories = []
+        for category in categories_ref:
+            cat = category.to_dict()
+            cat['id'] = category.id  # Añadir el ID a la respuesta
+            default_categories.append(cat)
+        return default_categories
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error retrieving default categories: {str(e)}")'''

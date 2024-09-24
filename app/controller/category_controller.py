@@ -65,3 +65,12 @@ def update_category_name_controller(category_id: str, new_name: str):
         raise HTTPException(status_code=400, detail="Cannot edit the name of a 'Default' category")
 
     return update_category_name(category_id, new_name)
+
+'''def get_default_categories_controller():
+    """
+    Controlador para obtener todas las categorías de tipo 'Default'.
+    """
+    try:
+        return get_default_categories_service()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))'''

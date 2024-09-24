@@ -79,6 +79,10 @@ async def register_category(category: Category):
 async def categories():
     return get_all_categories()
 
+@router.post("/register-category")
+async def register_category(category: Category):
+    return register_new_category(category) 
+
 @router.get("/categories/{category_id}")
 async def get_category(category_id: str):
     return get_category_by_id_controller(category_id)
@@ -90,3 +94,7 @@ async def delete_category(category_id: str):
 @router.put("/categories/name/{category_id}/{new_name}")
 async def update_category_name(category_id: str, new_name: str):
     return update_category_name_controller(category_id, new_name)
+
+'''@router.get("/default-categories")
+async def get_default_categories():
+    return get_default_categories_controller()'''
