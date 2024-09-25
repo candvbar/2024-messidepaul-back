@@ -1,8 +1,13 @@
+from dotenv import load_dotenv
+import os
 from firebase_admin import credentials, firestore, initialize_app
 
-# Inicializar Firebase
+# Cargar variables de entorno
+load_dotenv()
+
 def init_firebase():
-    cred = credentials.Certificate("candvbar-firebase-adminsdk-fzqx8-ab3c591562.json")
+    cred_path = os.getenv('FIREBASE_CREDENTIALS')
+    cred = credentials.Certificate(cred_path)
     initialize_app(cred)
     return firestore.client()
 
