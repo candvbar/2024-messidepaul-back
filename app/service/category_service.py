@@ -40,16 +40,6 @@ def create_category(category_data):
     except Exception as e:
         return {"error": str(e)}
 
-def register_new_category(category: Category):
-    if category.type == "Default":
-        raise HTTPException(status_code=400, detail="Cannot create a category with type 'Default'")
-    
-    response = create_category(category.dict())
-    if "error" in response:
-        raise HTTPException(status_code=500, detail=response["error"])
-    
-    return {"message": "Category registered successfully", "id": response["id"]}
-
 def update_category_name(category_id: str, new_name: str):
     try:
         category_ref = db.collection('category').document(category_id)

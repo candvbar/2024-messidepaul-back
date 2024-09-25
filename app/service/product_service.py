@@ -1,12 +1,44 @@
 from app.db.firebase import db
 
-def create_product(product_data):
+def get_next_product_id_from_existing():
+    """
+    Obtiene el próximo ID disponible en la colección 'products'.
+    """
     try:
-        new_product_ref = db.collection('products').document()
+        # Obtener todos los documentos de la colección 'products'
+        products = db.collection('products').stream()
+
+        # Extraer los IDs existentes y convertirlos a enteros
+        existing_ids = [int(product.id) for product in products if product.id.isdigit()]
+
+        if existing_ids:
+            # Encontrar el mayor ID existente y sumar 1
+            next_id = max(existing_ids) + 1
+        else:
+            # Si no hay IDs, comenzamos desde 1
+            next_id = 1
+
+        return next_id
+    except Exception as e:
+        raise Exception(f"Error retrieving next ID from existing products: {str(e)}")
+
+
+def create_product(product_data):
+    """
+    Crea un nuevo producto asegurando que el ID no colisione con uno existente.
+    """
+    try:
+        # Obtén el siguiente ID disponible
+        next_id = get_next_product_id_from_existing()
+
+        # Crea el nuevo documento con el ID autoincremental
+        new_product_ref = db.collection('products').document(str(next_id))
         new_product_ref.set(product_data)
-        return {"message": "Product added successfully", "id": new_product_ref.id}
+
+        return {"message": "Product added successfully", "id": next_id}
     except Exception as e:
         return {"error": str(e)}
+
 
 def products():
     try:

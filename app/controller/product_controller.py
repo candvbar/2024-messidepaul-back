@@ -6,8 +6,9 @@ from fastapi import HTTPException
 
 def register_new_product(product: Product):
     # Validación de precio no numérico y negativo
-    if isinstance(product.price, (int, float)):
-        if product.price <= 0:
+    price = float(product.price)
+    if isinstance(price, (int, float)):
+        if price <= 0:
             raise HTTPException(status_code=400, detail="Price cannot be negative or zero")
     else:
         raise HTTPException(status_code=400, detail="Price must be a number")
