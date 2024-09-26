@@ -40,6 +40,16 @@ def create_category(category_data):
     except Exception as e:
         return {"error": str(e)}
 
+def register_new_category(category: Category):
+    if category.type == "Default":
+        raise HTTPException(status_code=400, detail="Cannot create a category with type 'Default'")
+    
+    response = create_category(category.dict())
+    if "error" in response:
+        raise HTTPException(status_code=500, detail=response["error"])
+    
+    return {"message": "Category registered successfully", "id": response["id"]}
+
 def update_category_name(category_id: str, new_name: str):
     try:
         category_ref = db.collection('category').document(category_id)
@@ -60,6 +70,7 @@ def update_category_name(category_id: str, new_name: str):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+
 def get_categories():
     """
     Servicio para obtener todas las categorías desde Firebase.
@@ -71,7 +82,7 @@ def get_categories():
             cat = category.to_dict()
             cat['id'] = category.id  # Añadir el ID a la respuesta
             categories.append(cat)
-        return categories
+        return {"categories": categories}
     except Exception as e:
         return {"error": str(e)}
 
@@ -127,7 +138,30 @@ def category_exists(category_id: int) -> bool:
         category_ref = db.collection('category').document(str(category_id))  # Convertir a string
         return category_ref.get().exists  # Devuelve True si existe, False si no
     except Exception as e:
-        raise Exception(f"Error: {str(e)}")
+        raise Exception(f"Error al verificar la categoría con ID {category_id}: {str(e)}")
+
+
+def check_multiple_categories_exist(category_ids_str: str) -> dict:
+    """
+    Verifica si las categorías con los IDs proporcionados existen en Firestore.
+    Los IDs deben estar en formato de string separados por comas.
+    Devuelve un diccionario con los IDs y un booleano indicando si existen.
+    """
+    results = {}
+    try:
+        # Convertir la cadena de IDs en una lista
+        category_ids = [category_id.strip() for category_id in category_ids_str.split(',')]
+        
+        for category_id in category_ids:
+            exists = category_exists(int(category_id))  # Llama a la función existente
+            results[category_id] = exists  # Almacena el resultado en el diccionario
+    except Exception as e:
+        raise Exception(f"Error al verificar múltiples categorías: {str(e)}")
+    
+    return results
+
+    
+    return results
 
 '''def get_default_categories_service():
     """

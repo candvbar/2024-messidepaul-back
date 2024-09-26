@@ -9,7 +9,6 @@ load_dotenv()
 def init_firebase():
     cred_path = os.getenv("FIREBASE_CRED_PATH")
     firebase_creds_dict = json.loads(cred_path)
-    print(f"Ruta del archivo de credenciales: {cred_path}")
     cred = credentials.Certificate(firebase_creds_dict)
     initialize_app(cred)
     return firestore.client()

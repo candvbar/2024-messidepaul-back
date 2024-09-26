@@ -1,6 +1,6 @@
 from app.service.product_service import create_product, products, update_product_newprice, update_product_newdescription, delete_product, product_by_id
 from app.models.product import Product
-from app.service.category_service import category_exists
+from app.service.category_service import check_multiple_categories_exist
 from fastapi import HTTPException
  # Asegúrate de que esta importación es correcta
 
@@ -14,7 +14,7 @@ def register_new_product(product: Product):
         raise HTTPException(status_code=400, detail="Price must be a number")
 
     # Verificar si la categoría existe en Firestore
-    category_exists_check = category_exists(product.category)
+    category_exists_check = check_multiple_categories_exist(product.category)
     if not category_exists_check:
         raise HTTPException(status_code=400, detail="Category does not exist")
 

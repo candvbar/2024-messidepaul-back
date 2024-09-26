@@ -6,4 +6,4 @@ class Product(BaseModel):
     name: str
     price: Any  # Ensure product_price is non-negative
     description: str
-    category: int
+    category: str
