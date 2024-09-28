@@ -2,13 +2,14 @@ from fastapi import APIRouter
 from app.models.user import UserLogin, UserRegister, UserForgotPassword, TokenData
 from app.models.product import Product
 from app.models.category import Category
+from app.models.table import Table
 from app.controller.user_controller import login, register, handle_forgot_password, get_user_by_id, delete_user_by_id, token
 from app.controller.product_controller import register_new_product, get_products, update_product_price, update_product_description, delete_product_by_id, get_product_by_id, update_product_categories
 from app.controller.category_controller import delete_category_controller, get_all_categories, get_category_by_id_controller, register_new_category, update_category_name_controller
 from app.controller.table_controller import get_tables_controller
 router = APIRouter()
 
-@router.get("/")
+@router.get("https://two024-messidepaul-back.onrender.com")
 async def root():
     return "Server is running"
 
@@ -107,3 +108,10 @@ async def get_default_categories():
 @router.get("/tables")
 async def tables():
     return get_tables_controller()
+
+@router.post("/register-table")
+async def register_table(table: Table):
+    return register_new_table(table) 
+
+#----------------ORDER-------------------------
+

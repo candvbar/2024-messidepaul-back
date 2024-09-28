@@ -31,6 +31,10 @@ def create_product(product_data):
         # Obtén el siguiente ID disponible
         next_id = get_next_product_id_from_existing()
 
+        # Asegúrate de que la categoría se guarde como un string
+        if 'category' in product_data:
+            product_data['category'] = str(product_data['category'])  # Convertir a string
+
         # Crea el nuevo documento con el ID autoincremental
         new_product_ref = db.collection('products').document(str(next_id))
         new_product_ref.set(product_data)
@@ -38,6 +42,7 @@ def create_product(product_data):
         return {"message": "Product added successfully", "id": next_id}
     except Exception as e:
         return {"error": str(e)}
+
 
 
 def products():

@@ -13,12 +13,18 @@ def register_new_product(product: Product):
     else:
         raise HTTPException(status_code=400, detail="Price must be a number")
 
+    # Verifica si la categoría está en el formato correcto
+    category_str = str(product.category)  # Asegúrate de que sea un string
+
     # Verificar si la categoría existe en Firestore
-    category_exists_check = check_multiple_categories_exist(product.category)
+    category_exists_check = check_multiple_categories_exist(category_str)
     if not category_exists_check:
         raise HTTPException(status_code=400, detail="Category does not exist")
 
-    response = create_product(product.dict())
+    # Crea el producto
+    product_data = product.dict()
+    product_data['category'] = category_str  # Asegúrate de que se guarde como string
+    response = create_product(product_data)
     if "error" in response:
         raise HTTPException(status_code=500, detail=response["error"])
 

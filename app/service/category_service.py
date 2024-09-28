@@ -132,18 +132,18 @@ def update_category_name(category_id: str, new_name: str):
 def category_exists(category_id: int) -> bool:
     """
     Verifica si una categoría con el ID proporcionado existe en Firestore.
-    El ID se convierte a string para evitar errores.
     """
     try:
-        category_ref = db.collection('category').document(str(category_id))  # Convertir a string
+        # Aquí suponemos que category_id es un número, así que lo usamos directamente
+        category_ref = db.collection('category').document(str(category_id))  # Si Firestore requiere un string, mantén esto
         return category_ref.get().exists  # Devuelve True si existe, False si no
     except Exception as e:
         raise Exception(f"Error al verificar la categoría con ID {category_id}: {str(e)}")
 
-
-def check_multiple_categories_exist(category_str: str):
+def check_multiple_categories_exist(category_str: str) -> bool:
     try:
-        category_ids = [int(category_id) for category_id in category_str.split(",") if category_id.strip()]
+        # Convertimos los IDs de string a entero
+        category_ids = [int(category_id.strip()) for category_id in category_str.split(",") if category_id.strip()]
         print(category_ids)
         for category_id in category_ids:
             exists = category_exists(category_id)
