@@ -9,7 +9,7 @@ from app.controller.category_controller import delete_category_controller, get_a
 from app.controller.table_controller import get_tables_controller
 router = APIRouter()
 
-@router.get("https://two024-messidepaul-back.onrender.com")
+@router.get("/")
 async def root():
     return "Server is running"
 
