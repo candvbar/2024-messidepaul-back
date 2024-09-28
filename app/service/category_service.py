@@ -141,27 +141,18 @@ def category_exists(category_id: int) -> bool:
         raise Exception(f"Error al verificar la categoría con ID {category_id}: {str(e)}")
 
 
-def check_multiple_categories_exist(category_ids_str: str) -> dict:
-    """
-    Verifica si las categorías con los IDs proporcionados existen en Firestore.
-    Los IDs deben estar en formato de string separados por comas.
-    Devuelve un diccionario con los IDs y un booleano indicando si existen.
-    """
-    results = {}
+def check_multiple_categories_exist(category_str: str):
     try:
-        # Convertir la cadena de IDs en una lista
-        category_ids = [category_id.strip() for category_id in category_ids_str.split(',')]
-        
+        category_ids = [int(category_id) for category_id in category_str.split(",") if category_id.strip()]
+        print(category_ids)
         for category_id in category_ids:
-            exists = category_exists(int(category_id))  # Llama a la función existente
-            results[category_id] = exists  # Almacena el resultado en el diccionario
-    except Exception as e:
+            exists = category_exists(category_id)
+            if not exists:
+                raise Exception(f"Category with id {category_id} does not exist.")
+        return True
+    except ValueError as e:
         raise Exception(f"Error al verificar múltiples categorías: {str(e)}")
-    
-    return results
 
-    
-    return results
 
 '''def get_default_categories_service():
     """

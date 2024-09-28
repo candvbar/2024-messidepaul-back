@@ -78,6 +78,20 @@ def update_product_newdescription(product_id, new_description):
         return {"message": "Product description updated successfully"}
     except Exception as e:
         return {"error": str(e)}
+    
+def update_product_newcategories(product_id, new_categories):
+    try:
+        # Referencia al documento del producto que se va a actualizar
+        product_ref = db.collection('products').document(product_id)
+
+        # Actualización solo del campo 'category'
+        product_ref.update({
+            'category': new_categories  # Assuming new_categories is a comma-separated string
+        })
+
+        return {"message": "Product categories updated successfully"}
+    except Exception as e:
+        return {"error": str(e)}
 
 def delete_product(product_id: str):
     product_ref = db.collection('products').document(product_id)
