@@ -132,13 +132,4 @@ async def register_order(order: Order):
 
 
 #-----------------CALORIES----------------------
-@router.get("/api/food/logs")
-async def get_food_logs():
-    url = "https://two024-ranchoaparte-back.onrender.com/Foods"
-    
-    async with httpx.AsyncClient() as client:
-        response = await client.get(url)
-        response.raise_for_status()  # Raises an error for bad responses
-
-    return response.json()  # Return the JSON response from the external API
 

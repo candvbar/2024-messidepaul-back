@@ -5,8 +5,10 @@ from app.api import router
 app = FastAPI()
 
 origins = [
-    "http://localhost:4201",
-    "https://two024-ranchoaparte-back.onrender.com"  # Agrega esta URL si es el destino de la redirección
+    "http://localhost:4201", 
+    "https://two024-ranchoaparte-back.onrender.com",
+    "http://localhost:3000",
+    "https://2024-messidepaul-front.vercel.app"
 ]
 
 app.add_middleware(
