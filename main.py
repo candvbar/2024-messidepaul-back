@@ -5,7 +5,8 @@ from app.api import router
 app = FastAPI()
 
 origins = [
-    "http://localhost:4201",  # URL de tu aplicación Angular
+    "http://localhost:4201"
+    "https://2024-messidepaul-front.vercel.app"  # URL de tu aplicación Angular
 ]
 
 app.add_middleware(

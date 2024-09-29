@@ -16,3 +16,18 @@ def get_tables_service():
         return tables
     except Exception as e:
         return {"error": str(e)}
+
+def get_table_by_id(table_id: str):
+    """
+    Servicio para obtener una categoría por su ID.
+    """
+    try:
+        table_ref = db.collection('tables').document(table_id).get()
+        if table_ref.exists:
+            table = table_ref.to_dict()
+            table['id'] = table_ref.id
+            return table
+        else:
+            return None  # Si la categoría no existe
+    except Exception as e:
+        return {"error": str(e)}

@@ -3,10 +3,12 @@ from app.models.user import UserLogin, UserRegister, UserForgotPassword, TokenDa
 from app.models.product import Product
 from app.models.category import Category
 from app.models.table import Table
+from app.models.order import Order
 from app.controller.user_controller import login, register, handle_forgot_password, get_user_by_id, delete_user_by_id, token
 from app.controller.product_controller import register_new_product, get_products, update_product_price, update_product_description, delete_product_by_id, get_product_by_id, update_product_categories
 from app.controller.category_controller import delete_category_controller, get_all_categories, get_category_by_id_controller, register_new_category, update_category_name_controller
-from app.controller.table_controller import get_tables_controller
+from app.controller.table_controller import get_table_by_id_controller, get_tables_controller
+import httpx
 router = APIRouter()
 
 @router.get("/")
@@ -33,6 +35,14 @@ async def register_user(user: UserRegister):
 @router.post("/forgot-password/")
 async def forgot_password_user(user: UserForgotPassword):
     return handle_forgot_password(user)
+
+@router.get("/users/{uid}")
+async def get_user(uid: str):
+    return get_user_by_id(uid)
+
+@router.delete("/users/{uid}")
+async def delete_user(uid: str):
+    return delete_user_by_id(uid)
 
 #------------------------PRODUCTO--------------------------
 
@@ -65,14 +75,6 @@ async def delete_product(product_id: str):
 @router.get("/products/{product_id}")
 async def get_product(product_id: str):
     return get_product_by_id(product_id)
-
-@router.get("/users/{uid}")
-async def get_user(uid: str):
-    return get_user_by_id(uid)
-
-@router.delete("/users/{uid}")
-async def delete_user(uid: str):
-    return delete_user_by_id(uid)
 
 @router.post("/register-category")
 async def register_category(category: Category):
@@ -109,9 +111,34 @@ async def get_default_categories():
 async def tables():
     return get_tables_controller()
 
-@router.post("/register-table")
+'''@router.post("/register-table")
 async def register_table(table: Table):
-    return register_new_table(table) 
+    return register_new_table(table) '''
+
+@router.get("/tables/{table_id}")
+async def get_table(table_id: str):
+    return get_table_by_id_controller(table_id)
 
 #----------------ORDER-------------------------
+
+@router.get("/orders")
+async def orders():
+    return get_orders()
+
+@router.post("/register-order")
+async def register_order(order: Order):
+    print(order)
+    return register_new_order(order) 
+
+
+#-----------------CALORIES----------------------
+@router.get("/api/food/logs")
+async def get_food_logs():
+    url = "https://two024-ranchoaparte-back.onrender.com/Foods"
+    
+    async with httpx.AsyncClient() as client:
+        response = await client.get(url)
+        response.raise_for_status()  # Raises an error for bad responses
+
+    return response.json()  # Return the JSON response from the external API
 
