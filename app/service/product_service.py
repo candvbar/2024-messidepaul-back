@@ -122,3 +122,11 @@ def product_by_id(product_id: str):
         return {"product": product_data, "message": "Product retrieved successfully"}
     except Exception as e:
         return {"error": str(e)}
+
+def add_calories(product_id: str, calories: float):
+    try:
+        product_ref = db.collection('products').document(product_id)
+        product_ref.update({"calories": calories})
+        return {"message": "Product calories updated successfully"}
+    except Exception as e:
+        return {"error": str(e)}

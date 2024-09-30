@@ -1,4 +1,4 @@
-from app.service.product_service import create_product, products, update_product_newprice, update_product_newdescription, delete_product, product_by_id, update_product_newcategories
+from app.service.product_service import create_product, products, update_product_newprice, update_product_newdescription, delete_product, product_by_id, update_product_newcategories, add_calories
 from app.models.product import Product
 from app.service.category_service import check_multiple_categories_exist
 from fastapi import HTTPException
@@ -82,7 +82,9 @@ def get_product_by_id(product_id: str):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-
-
-
-   
+def add_food_calories(product_id: str, calories: float):
+    try:
+        response = add_calories(product_id, calories)
+        return response
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))

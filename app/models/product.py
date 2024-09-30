@@ -7,3 +7,4 @@ class Product(BaseModel):
     price: Any  # Ensure product_price is non-negative
     description: str
     category: str
+    calories: float
