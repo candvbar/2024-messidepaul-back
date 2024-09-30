@@ -5,7 +5,7 @@ from app.models.order import Order
 def create_order(order_data):
     try:
     
-        table_id = str(order_data.get('table_number'))
+        table_id = str(order_data.get('tableNumber'))
         next_id = get_next_order_id_from_existing()
         # Crear una nueva orden
         orders_ref = db.collection('orders')
@@ -35,7 +35,7 @@ def finalize_order(order_id: str):
             raise HTTPException(status_code=404, detail="Order not found")
 
         order_data = order.to_dict()
-        table_id = order_data.get('table_id')
+        table_id = str(order_data.get('tableNumber'))
 
         # Actualizar el estado de la orden como finalizada
         order_ref.update({"status": "finalized"})
