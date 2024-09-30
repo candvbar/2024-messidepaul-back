@@ -7,14 +7,14 @@ def register_new_order(order: Order):
     order_data = order.dict()
     
     # Validar que la mesa esté incluida en la orden
-    table_id = order_data.get('table_number')
+    table_id = order_data.get('tableNumber')
     if not table_id:
         raise HTTPException(status_code=400, detail="Table ID is required")
     
     print(order_data)
 
     # Obtener datos de los productos desde la orden
-    order_items = order_data.get('order_items', [])
+    order_items = order_data.get('orderItems', [])
     if not order_items:
         raise HTTPException(status_code=400, detail="At least one order item is required")
 
