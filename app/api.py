@@ -6,8 +6,9 @@ from app.models.order import Order
 from app.controller.user_controller import login, register, handle_forgot_password, get_user_by_id, delete_user_by_id, token
 from app.controller.product_controller import register_new_product, get_products, update_product_price, update_product_description, delete_product_by_id, get_product_by_id, update_product_categories, add_food_calories
 from app.controller.category_controller import delete_category_controller, get_all_categories, get_category_by_id_controller, register_new_category, update_category_name_controller
-from app.controller.table_controller import get_table_by_id_controller, get_tables_controller
-import httpx
+from app.controller.table_controller import get_table_by_id_controller, get_tables_controller, update_table_status_controller
+from app.controller.order_controller import register_new_order, finalize_order_controller, get_orders, get_order_controller
+
 router = APIRouter()
 
 @router.get("/")
@@ -110,13 +111,18 @@ async def get_default_categories():
 async def tables():
     return get_tables_controller()
 
-'''@router.post("/register-table")
-async def register_table(table: Table):
-    return register_new_table(table) '''
-
 @router.get("/tables/{table_id}")
 async def get_table(table_id: str):
     return get_table_by_id_controller(table_id)
+
+@router.put("/tables/status/{table_id}")
+async def update_table_status(table_id: str, new_status: str):
+    return update_table_status_controller(table_id, new_status)
+
+# Asignar una orden a una mesa
+'''@router.put("/tables/add-order/{table_id}/{order_id}")
+async def add_order_to_table(table_id: str, order_id: str):
+    return add_order_to_table_controller(table_id, order_id)'''
 
 #----------------ORDER-------------------------
 
@@ -128,6 +134,19 @@ async def orders():
 async def register_order(order: Order):
     print(order)
     return register_new_order(order) 
+
+@router.put("/orders/finalize/{order_id}")
+async def finalize_order(order_id: str):
+    return finalize_order_controller(order_id)
+
+@router.get("/orders/{order_id}")
+async def get_order(order_id: str):
+    return get_order_controller(order_id)
+
+
+
+#----------------ORDERITEM-------------------------
+
 
 
 #-----------------CALORIES----------------------

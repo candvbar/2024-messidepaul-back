@@ -1,4 +1,5 @@
 from typing import Any
+from app.models.order_item import OrderItem
 from pydantic import BaseModel, Field
 
 # Modelo para registrar un nuevo producto
@@ -8,4 +9,4 @@ class Order(BaseModel):
     date: str
     time: str
     total: str
-    orders: str
+    order_item: OrderItem

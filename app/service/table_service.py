@@ -1,6 +1,4 @@
 from app.db.firebase import db
-from app.models.table import Table
-from fastapi import HTTPException
 
 def get_tables_service():
     """
@@ -31,3 +29,14 @@ def get_table_by_id(table_id: str):
             return None  # Si la categoría no existe
     except Exception as e:
         return {"error": str(e)}
+
+def update_table_status(table_id: str, new_status: str):
+        try:
+            tables_ref = db.collection('tables').document(table_id)
+            if tables_ref.get().exists:
+                tables_ref.update({"status": new_status})
+                return {"message": "Table status updated successfully"}
+            else:
+                return {"error": "Table not found"}
+        except Exception as e:
+            return {"error": str(e)}
