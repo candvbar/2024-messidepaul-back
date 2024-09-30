@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, List
 from app.models.order_item import OrderItem
 from pydantic import BaseModel, Field
 
@@ -9,4 +9,4 @@ class Order(BaseModel):
     date: str
     time: str
     total: str
-    order_item: OrderItem
+    order_items: List[OrderItem]
