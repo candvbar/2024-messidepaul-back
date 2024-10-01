@@ -8,7 +8,8 @@ origins = [
     "http://localhost:4201", 
     "https://two024-ranchoaparte-back.onrender.com",
     "http://localhost:3000",
-    "https://2024-messidepaul-front.vercel.app"
+    "https://2024-messidepaul-front.vercel.app", 
+    "https://2024-ranchoaparte-front-ivory.vercel.app"
 ]
 
 app.add_middleware(
