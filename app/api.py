@@ -122,7 +122,7 @@ async def update_table_status(table_id: str, new_status: str):
     return update_table_status_controller(table_id, new_status)
 
 @router.put("/tables/order/{table_id}")
-async def associate_order_with_table(table_id: str, order_id: str):
+async def associate_order_with_table(table_id: str, order_id: int):
     return associate_order_with_table_controller(table_id, order_id)
 
 #----------------ORDER-------------------------

@@ -41,7 +41,7 @@ def update_table_status(table_id: str, new_status: str):
         except Exception as e:
             return {"error": str(e)}
 
-def associate_order_with_table(table_id: str, order_id: str):
+def associate_order_with_table(table_id: str, order_id: int):
     """
     Servicio para asociar un order ID con una tabla.
     """

@@ -43,7 +43,7 @@ async def get_order_for_table(table_id: str):
 
     return order
 
-def associate_order_with_table_controller(table_id: str, order_id: str):
+def associate_order_with_table_controller(table_id: str, order_id: int):
     print(table_id)
     print(order_id)
     response = associate_order_with_table(table_id, order_id)
