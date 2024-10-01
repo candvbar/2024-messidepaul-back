@@ -1,6 +1,8 @@
+from typing import List
 from app.db.firebase import db
 from app.service.table_service import update_table_status
-from app.models.order import Order
+from app.models.order_item import OrderItem
+from fastapi import HTTPException
 
 def create_order(order_data):
     try:
@@ -60,10 +62,9 @@ def get_order_by_id(order_id: str):
     try:
         order_ref = db.collection('orders').document(order_id)
         order_doc = order_ref.get()
-
+        print(order_doc.to_dict())
         if not order_doc.exists:
             return None
-
         return order_doc.to_dict()
 
     except Exception as e:
@@ -109,3 +110,37 @@ def get_next_order_id_from_existing():
         return next_id
     except Exception as e:
         raise Exception(f"Error retrieving next ID from existing products: {str(e)}")
+
+def update_order(order_id: str, updated_order_data: dict):
+    try:
+        # Reference to the order in the database
+        order_ref = db.collection('orders').document(order_id)
+        
+        # Perform the update in the database
+        order_ref.update(updated_order_data)
+        return {"message": "Order updated successfully"}
+    except Exception as e:
+        return {"error": str(e)}
+
+def add_items_to_order(order_id: str, new_items: List[OrderItem]):
+    existing_order = get_order_by_id(order_id)
+    if not existing_order:
+        raise HTTPException(status_code=404, detail="Order not found")
+    
+    # Make a copy of the current order items
+    current_items = existing_order.get("orderItems", []).copy()
+    
+    # Append new items to the current items list
+    current_items.extend([item.dict() for item in new_items])
+
+    # Prepare updated order data with the new items
+    order_copy = existing_order.copy()
+    order_copy["orderItems"] = current_items
+    
+    # Update the order with the new orderItems
+    response = update_order(order_id, order_copy)
+
+    if "error" in response:
+        raise HTTPException(status_code=500, detail=response["error"])
+    
+    return response

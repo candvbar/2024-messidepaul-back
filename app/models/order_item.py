@@ -4,5 +4,5 @@ from app.models.product import Product
 
 # Modelo para registrar un nuevo producto
 class OrderItem(BaseModel):
-    product: Product
+    product_id: str
     amount: int
