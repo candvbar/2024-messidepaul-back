@@ -6,7 +6,6 @@ from fastapi import HTTPException
 
 def create_order(order_data):
     try:
-    
         table_id = str(order_data.get('tableNumber'))
         next_id = get_next_order_id_from_existing()
         # Crear una nueva orden
@@ -19,11 +18,14 @@ def create_order(order_data):
         if table_id:
             update_table_status(table_id, "BUSY")
 
-        return {"message": "Order created successfully", "order_id": new_order_ref.id}
+        return {
+            "message": "Order created successfully",
+            "order_id": next_id,  # Devuelve el ID de la nueva orden
+            "order": order_data  # También puedes devolver los datos de la orden
+        }
     except Exception as e:
         return {"error": str(e)}
-
-
+        
 def finalize_order(order_id: str):
     """
     Finaliza una orden y, si no hay más órdenes activas en la mesa, cambia el estado de la mesa a "free".
