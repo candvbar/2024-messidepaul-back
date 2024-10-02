@@ -25,7 +25,7 @@ def create_order(order_data):
         }
     except Exception as e:
         return {"error": str(e)}
-        
+
 def finalize_order(order_id: str):
     """
     Finaliza una orden y, si no hay más órdenes activas en la mesa, cambia el estado de la mesa a "free".
@@ -124,7 +124,7 @@ def update_order(order_id: str, updated_order_data: dict):
     except Exception as e:
         return {"error": str(e)}
 
-def add_items_to_order(order_id: str, new_items: List[OrderItem]):
+def add_items_to_order(order_id: str, new_items: List[OrderItem], total: str):
     existing_order = get_order_by_id(order_id)
     if not existing_order:
         raise HTTPException(status_code=404, detail="Order not found")
@@ -138,7 +138,7 @@ def add_items_to_order(order_id: str, new_items: List[OrderItem]):
     # Prepare updated order data with the new items
     order_copy = existing_order.copy()
     order_copy["orderItems"] = current_items
-    
+    order_copy["total"] = total
     # Update the order with the new orderItems
     response = update_order(order_id, order_copy)
 

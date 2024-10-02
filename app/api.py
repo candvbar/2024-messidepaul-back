@@ -145,8 +145,8 @@ async def get_order(order_id: str):
     return get_order_controller(order_id)
 
 @router.put("/orders/order-items/{order_id}")
-async def update_order_items(order_id: str, new_order_items: List[OrderItem]):
-    return add_order_items(order_id, new_order_items)
+async def update_order_items(order_id: str, new_order_items: List[OrderItem], total: str):
+    return add_order_items(order_id, new_order_items, total)
 #----------------ORDERITEM-------------------------
 
 

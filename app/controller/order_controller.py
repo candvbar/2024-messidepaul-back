@@ -78,7 +78,7 @@ def get_orders():
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-def add_order_items(order_id: str, new_order_items: List[OrderItem]):
+def add_order_items(order_id: str, new_order_items: List[OrderItem], total: str):
     try:
         # Fetch the existing order
         existing_order = get_order_by_id(order_id)
@@ -96,7 +96,7 @@ def add_order_items(order_id: str, new_order_items: List[OrderItem]):
             if "error" in product:
                 raise HTTPException(status_code=404, detail=f"Product with ID {product_id} not found")
 
-        # Add new items to the order
+        
         response = add_items_to_order(order_id, new_order_items)
         return response
     
