@@ -78,16 +78,19 @@ def get_orders():
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-def add_order_items(order_id: str, new_order_items: List[OrderItem], total: str):
+def add_order_items(order_id: str, new_order_items_data: List[dict], total: str):
     try:
         # Fetch the existing order
         existing_order = get_order_by_id(order_id)
         if not existing_order:
             raise HTTPException(status_code=404, detail="Order not found")
 
-        # Check if the order status is 'in progress'
-        if existing_order.get("status") != "in progress":
+        # Check if the order status is 'IN PROGRESS'
+        if existing_order.get("status") != "IN PROGRESS":
             raise HTTPException(status_code=400, detail="Cannot add items to an order that is not in progress")
+
+        # Convert the dictionary to OrderItem instances
+        new_order_items = [OrderItem(**item) for item in new_order_items_data]
 
         # Validate that each product_id exists in the products table
         for item in new_order_items:
@@ -96,12 +99,13 @@ def add_order_items(order_id: str, new_order_items: List[OrderItem], total: str)
             if "error" in product:
                 raise HTTPException(status_code=404, detail=f"Product with ID {product_id} not found")
 
-        
-        response = add_items_to_order(order_id, new_order_items)
+        # Add new items to the order
+        response = add_items_to_order(order_id, new_order_items, total)
         return response
     
     except HTTPException as e:
         raise e
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
 

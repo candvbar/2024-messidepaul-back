@@ -122,7 +122,7 @@ def update_order(order_id: str, updated_order_data: dict):
         order_ref.update(updated_order_data)
         return {"message": "Order updated successfully"}
     except Exception as e:
-        return {"error": str(e)}
+        raise HTTPException(status_code=500, detail=str(e))
 
 def add_items_to_order(order_id: str, new_items: List[OrderItem], total: str):
     existing_order = get_order_by_id(order_id)
@@ -139,6 +139,7 @@ def add_items_to_order(order_id: str, new_items: List[OrderItem], total: str):
     order_copy = existing_order.copy()
     order_copy["orderItems"] = current_items
     order_copy["total"] = total
+    
     # Update the order with the new orderItems
     response = update_order(order_id, order_copy)
 

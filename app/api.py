@@ -1,4 +1,4 @@
-from typing import List
+from typing import Any, Dict, List
 from fastapi import APIRouter
 from app.models.user import UserLogin, UserRegister, UserForgotPassword, TokenData
 from app.models.product import Product
@@ -145,7 +145,10 @@ async def get_order(order_id: str):
     return get_order_controller(order_id)
 
 @router.put("/orders/order-items/{order_id}")
-async def update_order_items(order_id: str, new_order_items: List[OrderItem], total: str):
+async def update_order_items(order_id: str, body: Dict[str, Any]):
+    new_order_items = body.get("new_order_items", [])
+    total = body.get("total", "")
+    
     return add_order_items(order_id, new_order_items, total)
 #----------------ORDERITEM-------------------------
 
