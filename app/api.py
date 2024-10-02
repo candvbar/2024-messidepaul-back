@@ -152,9 +152,9 @@ async def get_order(order_id: str):
 
 @router.put("/orders/order-items/{order_id}")
 async def update_order_items(order_id: str, body: Dict[str, Any]):
+    print("Request body:", body)
     new_order_items = body.get("new_order_items", [])
-    total = body.get("total", "")
-    
+    total = body.get("new_order_total", "")
     return add_order_items(order_id, new_order_items, total)
 
 @router.put("/orders-finalize/{order_id}")
