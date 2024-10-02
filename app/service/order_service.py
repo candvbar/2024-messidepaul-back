@@ -28,30 +28,18 @@ def create_order(order_data):
 
 def finalize_order(order_id: str):
     """
-    Finaliza una orden y, si no hay más órdenes activas en la mesa, cambia el estado de la mesa a "free".
+    Finalizes an order.
     """
     try:
-        # Obtener la orden por su ID
+        # Get the order by its ID
         order_ref = db.collection('orders').document(order_id)
         order = order_ref.get()
 
         if not order.exists:
             raise HTTPException(status_code=404, detail="Order not found")
 
-        order_data = order.to_dict()
-        table_id = str(order_data.get('tableNumber'))
-
-        # Actualizar el estado de la orden como finalizada
-        order_ref.update({"status": "finalized"})
-
-        # Verificar si hay más órdenes activas en la mesa
-        if table_id:
-            active_orders = db.collection('orders').where('table_id', '==', table_id).where('status', '!=', 'finalized').stream()
-            active_order_list = list(active_orders)
-
-            # Si no hay más órdenes activas, liberar la mesa
-            if not active_order_list:
-                update_table_status(table_id, "FREE")
+        # Update the order status to finalized
+        order_ref.update({"status": "FINALIZED"})
 
         return {"message": "Order finalized successfully"}
     except Exception as e:

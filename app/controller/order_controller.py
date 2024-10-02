@@ -50,7 +50,11 @@ def register_new_order(order: Order):
     return response
 
 def finalize_order_controller(order_id: str):
+    """
+    Endpoint to finalize an order by ID.
+    """
     try:
+        # Call the service to finalize the order
         response = finalize_order(order_id)
         return response
     except HTTPException as e:

@@ -1,4 +1,5 @@
-from app.service.table_service import associate_order_with_table, get_tables_service, get_table_by_id, update_table_status
+from typing import Dict, Union
+from app.service.table_service import associate_order_with_table, close_table_service, get_tables_service, get_table_by_id, update_table_status
 from app.models.table import Table
 from fastapi import HTTPException
 from app.service.order_service import get_order_by_id
@@ -50,3 +51,21 @@ def associate_order_with_table_controller(table_id: str, order_id: int):
     if 'error' in response:
         raise HTTPException(status_code=400, detail=response['error'])
     return response
+
+def close_table_controller(table_id: str, body: Dict[str, Union[str, int]]):
+    try:
+        status = body.get("status")
+        order_id = body.get("order_id")
+
+        # Validate input
+        if status != "FREE":
+            raise HTTPException(status_code=400, detail="Status must be 'FREE'")
+        if order_id != 0:
+            raise HTTPException(status_code=400, detail="Order ID must be 0")
+        
+        response = close_table_service(table_id)
+        return response
+    except HTTPException as e:
+        raise e
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))

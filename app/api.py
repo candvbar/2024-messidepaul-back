@@ -1,4 +1,4 @@
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Union
 from fastapi import APIRouter
 from app.models.user import UserLogin, UserRegister, UserForgotPassword, TokenData
 from app.models.product import Product
@@ -7,9 +7,10 @@ from app.models.order import Order
 from app.controller.user_controller import login, register, handle_forgot_password, get_user_by_id, delete_user_by_id, token
 from app.controller.product_controller import register_new_product, get_products, update_product_price, update_product_description, delete_product_by_id, get_product_by_id, update_product_categories, add_food_calories
 from app.controller.category_controller import delete_category_controller, get_all_categories, get_category_by_id_controller, register_new_category, update_category_name_controller
-from app.controller.table_controller import associate_order_with_table_controller, get_table_by_id_controller, get_tables_controller, update_table_status_controller
+from app.controller.table_controller import associate_order_with_table_controller, close_table_controller, get_table_by_id_controller, get_tables_controller, update_table_status_controller
 from app.controller.order_controller import register_new_order, finalize_order_controller, get_orders, get_order_controller, add_order_items
 from app.models.order_item import OrderItem
+from app.models.table import Table
 
 router = APIRouter()
 
@@ -125,6 +126,11 @@ async def update_table_status(table_id: str, new_status: str):
 async def associate_order_with_table(table_id: str, order_id: int):
     return associate_order_with_table_controller(table_id, order_id)
 
+@router.put("/close-table/{table_id}")
+async def close_table(table_id: str, body: Dict[str, Union[str, int]]):
+    print(body)
+    return close_table_controller(table_id, body)
+
 #----------------ORDER-------------------------
 
 @router.get("/orders")
@@ -150,6 +156,11 @@ async def update_order_items(order_id: str, body: Dict[str, Any]):
     total = body.get("total", "")
     
     return add_order_items(order_id, new_order_items, total)
+
+@router.put("/orders-finalize/{order_id}")
+async def finalize_order(order_id: str):
+    return finalize_order_controller(order_id)
+    
 #----------------ORDERITEM-------------------------
 
 
