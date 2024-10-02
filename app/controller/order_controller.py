@@ -89,17 +89,17 @@ def add_order_items(order_id: str, new_order_items_data: List[dict], total: str)
         if existing_order.get("status") != "IN PROGRESS":
             raise HTTPException(status_code=400, detail="Cannot add items to an order that is not in progress")
 
-        # Convert the dictionary to OrderItem instances
+        # Convertir los datos de la solicitud en instancias de OrderItem
         new_order_items = [OrderItem(**item) for item in new_order_items_data]
 
-        # Validate that each product_id exists in the products table
+        # Validar que cada product_id exista en la tabla de productos
         for item in new_order_items:
             product_id = item.product_id
             product = product_by_id(product_id)  # Fetch product details by product_id
             if "error" in product:
                 raise HTTPException(status_code=404, detail=f"Product with ID {product_id} not found")
 
-        # Add new items to the order
+        # Actualizar la orden con los nuevos ítems (que ya incluyen viejos y nuevos)
         response = add_items_to_order(order_id, new_order_items, total)
         return response
     
@@ -107,5 +107,3 @@ def add_order_items(order_id: str, new_order_items_data: List[dict], total: str)
         raise e
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-
-

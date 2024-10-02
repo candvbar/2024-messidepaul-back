@@ -129,31 +129,15 @@ def add_items_to_order(order_id: str, new_items: List[OrderItem], total: str):
     if not existing_order:
         raise HTTPException(status_code=404, detail="Order not found")
     
-    # Obtener los items actuales de la orden
-    current_items = existing_order.get("orderItems", [])
-    
-    # Crear un diccionario para facilitar el acceso a los items existentes
-    current_items_dict = {item["product_id"]: item for item in current_items}
-
-    # Añadir o actualizar los nuevos items en la orden
-    for new_item in new_items:
-        if new_item.product_id in current_items_dict:
-            # Si el producto ya existe, incrementar la cantidad
-            current_item = current_items_dict[new_item.product_id]
-            current_item["amount"] += new_item.amount
-        else:
-            # Si el producto no existe, agregarlo a la lista
-            current_items.append(new_item.dict())
-
-    # Preparar los datos de la orden actualizados
+    # Preparar los datos de la orden actualizados con los nuevos ítems (viejos y nuevos ya incluidos en 'new_items')
     order_copy = existing_order.copy()
-    order_copy["orderItems"] = current_items
-    order_copy["total"] = total
+    order_copy["orderItems"] = [item.dict() for item in new_items]  # Reemplazar directamente los ítems
+    order_copy["total"] = total  # Actualizar el total
     
-    # Actualizar la orden con los nuevos items
+    # Actualizar la orden en la base de datos
     response = update_order(order_id, order_copy)
 
     if "error" in response:
         raise HTTPException(status_code=500, detail=response["error"])
     
-    return response 
+    return response
