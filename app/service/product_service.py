@@ -1,12 +1,49 @@
 from app.db.firebase import db
 
-def create_product(product_data):
+def get_next_product_id_from_existing():
+    """
+    Obtiene el próximo ID disponible en la colección 'products'.
+    """
     try:
-        new_product_ref = db.collection('products').document()
+        # Obtener todos los documentos de la colección 'products'
+        products = db.collection('products').stream()
+
+        # Extraer los IDs existentes y convertirlos a enteros
+        existing_ids = [int(product.id) for product in products if product.id.isdigit()]
+
+        if existing_ids:
+            # Encontrar el mayor ID existente y sumar 1
+            next_id = max(existing_ids) + 1
+        else:
+            # Si no hay IDs, comenzamos desde 1
+            next_id = 1
+
+        return next_id
+    except Exception as e:
+        raise Exception(f"Error retrieving next ID from existing products: {str(e)}")
+
+
+def create_product(product_data):
+    """
+    Crea un nuevo producto asegurando que el ID no colisione con uno existente.
+    """
+    try:
+        # Obtén el siguiente ID disponible
+        next_id = get_next_product_id_from_existing()
+
+        # Asegúrate de que la categoría se guarde como un string
+        if 'category' in product_data:
+            product_data['category'] = str(product_data['category'])  # Convertir a string
+
+        # Crea el nuevo documento con el ID autoincremental
+        new_product_ref = db.collection('products').document(str(next_id))
         new_product_ref.set(product_data)
-        return {"message": "Product added successfully", "id": new_product_ref.id}
+
+        return {"message": "Product added successfully", "id": next_id}
     except Exception as e:
         return {"error": str(e)}
+
+
 
 def products():
     try:
@@ -24,10 +61,10 @@ def products():
         return {"error": str(e)}  # Removed the status code tuple
 
 
-def update_product_newprice(product_id: str, new_price: float):
+def update_product_newprice(product_id: str, new_price):
     try:
         product_ref = db.collection('products').document(product_id)
-        product_ref.update({"product_price": new_price})
+        product_ref.update({"price": new_price})
         return {"message": "Product price updated successfully"}
     except Exception as e:
         return {"error": str(e)}
@@ -35,12 +72,31 @@ def update_product_newprice(product_id: str, new_price: float):
 
 def update_product_newdescription(product_id, new_description):
     try:
+        # Referencia al documento del producto que se va a actualizar
         product_ref = db.collection('products').document(product_id)
-        product_ref.update({'description': new_description})
+
+        # Actualización solo del campo 'description'
+        product_ref.update({
+            'description': new_description
+        })
+
         return {"message": "Product description updated successfully"}
     except Exception as e:
         return {"error": str(e)}
+    
+def update_product_newcategories(product_id, new_categories):
+    try:
+        # Referencia al documento del producto que se va a actualizar
+        product_ref = db.collection('products').document(product_id)
 
+        # Actualización solo del campo 'category'
+        product_ref.update({
+            'category': new_categories  # Assuming new_categories is a comma-separated string
+        })
+
+        return {"message": "Product categories updated successfully"}
+    except Exception as e:
+        return {"error": str(e)}
 
 def delete_product(product_id: str):
     product_ref = db.collection('products').document(product_id)
@@ -66,3 +122,29 @@ def product_by_id(product_id: str):
         return {"product": product_data, "message": "Product retrieved successfully"}
     except Exception as e:
         return {"error": str(e)}
+
+def add_calories(product_id: str, calories: float):
+    try:
+        product_ref = db.collection('products').document(product_id)
+        product_ref.update({"calories": calories})
+        return {"message": "Product calories updated successfully"}
+    except Exception as e:
+        return {"error": str(e)}
+
+def check_product_name_exists(product_name: str):
+    """
+    Verifica si ya existe un producto con el nombre dado en la base de datos.
+    """
+    try:
+        # Realizar una consulta en la colección 'products' para buscar coincidencias de nombre
+        products_ref = db.collection('products')
+        matching_products = products_ref.where("name", "==", product_name).stream()
+
+        # Verificar si existe al menos un producto con el mismo nombre
+        if any(matching_products):  # Si hay productos que coinciden
+            return True
+
+        # Si no hay coincidencias, retornamos False
+        return False
+    except Exception as e:
+        raise Exception(f"Error checking if product name exists: {str(e)}")

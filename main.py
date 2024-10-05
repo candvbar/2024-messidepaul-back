@@ -5,7 +5,11 @@ from app.api import router
 app = FastAPI()
 
 origins = [
-    "http://localhost:4201",  # URL de tu aplicación Angular
+    "http://localhost:4201", 
+    "https://two024-ranchoaparte-back.onrender.com",
+    "http://localhost:3000",
+    "https://2024-messidepaul-front.vercel.app", 
+    "https://2024-ranchoaparte-front-ivory.vercel.app"
 ]
 
 app.add_middleware(
@@ -15,6 +19,7 @@ app.add_middleware(
     allow_methods=["*"],  # Permitir todos los métodos HTTP
     allow_headers=["*"],  # Permitir todos los encabezados
 )
+
 
 # Incluir las rutas de tu API
 app.include_router(router)
