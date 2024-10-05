@@ -160,9 +160,6 @@ async def update_order_items(order_id: str, body: Dict[str, Any]):
 @router.put("/orders-finalize/{order_id}")
 async def finalize_order(order_id: str):
     return finalize_order_controller(order_id)
-    
-#----------------ORDERITEM-------------------------
-
 
 #-----------------CALORIES----------------------
 

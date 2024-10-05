@@ -61,7 +61,7 @@ def products():
         return {"error": str(e)}  # Removed the status code tuple
 
 
-def update_product_newprice(product_id: str, new_price: float):
+def update_product_newprice(product_id: str, new_price):
     try:
         product_ref = db.collection('products').document(product_id)
         product_ref.update({"price": new_price})
@@ -130,3 +130,21 @@ def add_calories(product_id: str, calories: float):
         return {"message": "Product calories updated successfully"}
     except Exception as e:
         return {"error": str(e)}
+
+def check_product_name_exists(product_name: str):
+    """
+    Verifica si ya existe un producto con el nombre dado en la base de datos.
+    """
+    try:
+        # Realizar una consulta en la colección 'products' para buscar coincidencias de nombre
+        products_ref = db.collection('products')
+        matching_products = products_ref.where("name", "==", product_name).stream()
+
+        # Verificar si existe al menos un producto con el mismo nombre
+        if any(matching_products):  # Si hay productos que coinciden
+            return True
+
+        # Si no hay coincidencias, retornamos False
+        return False
+    except Exception as e:
+        raise Exception(f"Error checking if product name exists: {str(e)}")

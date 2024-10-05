@@ -153,6 +153,24 @@ def check_multiple_categories_exist(category_str: str) -> bool:
     except ValueError as e:
         raise Exception(f"Error al verificar múltiples categorías: {str(e)}")
 
+def check_category_name_exists(category_name: str) -> bool:
+    """
+    Verifica si ya existe una categoría con el nombre dado en la base de datos.
+    """
+    try:
+        # Realizar una consulta en la colección 'category' para buscar coincidencias de nombre
+        categories_ref = db.collection('category')
+        matching_categories = categories_ref.where("name", "==", category_name).stream()
+
+        # Verificar si existe al menos una categoría con el mismo nombre
+        if any(matching_categories):  # Si hay categorías que coinciden
+            return True
+
+        # Si no hay coincidencias, retornamos False
+        return False
+    except Exception as e:
+        raise Exception(f"Error checking if category name exists: {str(e)}")
+
 
 '''def get_default_categories_service():
     """

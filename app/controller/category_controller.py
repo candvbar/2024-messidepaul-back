@@ -1,4 +1,4 @@
-from app.service.category_service import create_category, get_categories, get_category_by_id, delete_category_by_id, update_category_name
+from app.service.category_service import check_category_name_exists, create_category, get_categories, get_category_by_id, delete_category_by_id, update_category_name
 from app.models.category import Category
 from fastapi import HTTPException
 
@@ -6,23 +6,22 @@ def register_new_category(category: Category):
     """
     Controlador que valida y registra una nueva categoría.
     """
-    # Validar si el tipo es una cadena
     if not isinstance(category.type, str):
         raise HTTPException(status_code=400, detail="Category type must be a string")
     
-    # Impedir que se registren categorías de tipo Default
     if category.type == "Default":
         raise HTTPException(status_code=400, detail="Category type cannot be 'Default'")
     if category.type != "Custom":
         category.type = "Custom"
-    # Llamar al servicio para crear la categoría
+    
+    if check_category_name_exists(category.name):
+        raise HTTPException(status_code=400, detail="Category name already exists")
+
     response = create_category(category.dict())
     
-    # Si hay un error, lanzar una excepción HTTP
     if "error" in response:
         raise HTTPException(status_code=500, detail=response["error"])
     
-    # Si todo va bien, devolver la respuesta
     return {"message": "Category registered successfully", "id": response["id"]}
 
 def get_all_categories():
