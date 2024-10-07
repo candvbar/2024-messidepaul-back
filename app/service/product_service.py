@@ -148,3 +148,53 @@ def check_product_name_exists(product_name: str):
         return False
     except Exception as e:
         raise Exception(f"Error checking if product name exists: {str(e)}")
+
+def get_products_by_category(category_ids_str: str):
+    try:
+        # Reference to the 'products' collection
+        category_ids = category_ids_str.split(', ')
+        products_ref = db.collection('products')
+        products = products_ref.stream()
+
+        # Filter products by the provided category IDs
+        filtered_products = []
+        for product in products:
+            product_data = product.to_dict()
+            
+            # Split the product's categories and check if any match the input category_ids
+            product_categories = product_data['category'].split(', ')
+            if any(category_id in product_categories for category_id in category_ids):
+                filtered_products.append(product_data)
+
+        # Raise an exception if no products are found for the given categories
+        if not filtered_products:
+            raise Exception(f"No products found for categories {', '.join(category_ids)}")
+
+        return filtered_products
+
+    except Exception as e:
+        raise Exception(f"Error retrieving products by categories: {str(e)}")
+
+def check_product_in_in_progress_orders(product_id: str):
+    """
+    Checks if the given product_id is present in any 'IN PROGRESS' orders.
+    """
+    try:
+        # Reference to the 'orders' collection in Firestore
+        orders_ref = db.collection('orders')
+        
+        # Query to get all orders that are 'IN PROGRESS'
+        in_progress_orders = orders_ref.where("status", "==", "IN PROGRESS").stream()
+
+        # Loop through each order and check if the product_id is in any orderItems
+        for order in in_progress_orders:
+            order_data = order.to_dict()
+            for item in order_data.get('orderItems', []):
+                if item['product_id'] == product_id:
+                    return True  # Product found in an order
+
+        # If no order contains the product_id, return False
+        return False
+
+    except Exception as e:
+        raise Exception(f"Error checking for product in 'IN PROGRESS' orders: {str(e)}")

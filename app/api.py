@@ -5,7 +5,7 @@ from app.models.product import Product
 from app.models.category import Category
 from app.models.order import Order
 from app.controller.user_controller import login, register, handle_forgot_password, get_user_by_id, delete_user_by_id, token
-from app.controller.product_controller import register_new_product, get_products, update_product_price, update_product_description, delete_product_by_id, get_product_by_id, update_product_categories, add_food_calories
+from app.controller.product_controller import check_product_in_in_progress_orders_controller, get_products_by_category_controller, register_new_product, get_products, update_product_price, update_product_description, delete_product_by_id, get_product_by_id, update_product_categories, add_food_calories
 from app.controller.category_controller import delete_category_controller, get_all_categories, get_category_by_id_controller, register_new_category, update_category_name_controller
 from app.controller.table_controller import associate_order_with_table_controller, close_table_controller, get_table_by_id_controller, get_tables_controller, update_table_status_controller
 from app.controller.order_controller import register_new_order, finalize_order_controller, get_orders, get_order_controller, add_order_items
@@ -83,6 +83,15 @@ async def get_product(product_id: str):
 async def register_category(category: Category):
     return register_new_category(category)
 
+@router.get("/categories/products/{category_id}")
+async def get_products_by_category(category_id: str):
+    return get_products_by_category_controller(category_id)
+
+@router.get("/orders/products/{product_id}")
+async def check_product_in_in_progress_orders(product_id: str):
+    return check_product_in_in_progress_orders_controller(product_id)
+
+
 #------------------------CATEGORIA--------------------------
 
 @router.get("/categories")
@@ -104,6 +113,7 @@ async def delete_category(category_id: str):
 @router.put("/categories/name/{category_id}/{new_name}")
 async def update_category_name(category_id: str, new_name: str):
     return update_category_name_controller(category_id, new_name)
+
 
 '''@router.get("/default-categories")
 async def get_default_categories():
