@@ -136,9 +136,9 @@ def get_products_by_category_controller(category_id: str):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-def check_product_in_in_progress_orders_controller(product_id: str):
+def check_product_in_in_progress_orders_controller():
     try:
-        response = check_product_in_in_progress_orders(product_id)
+        response = check_product_in_in_progress_orders()
         return response
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

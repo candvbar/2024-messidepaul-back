@@ -175,26 +175,47 @@ def get_products_by_category(category_ids_str: str):
     except Exception as e:
         raise Exception(f"Error retrieving products by categories: {str(e)}")
 
-def check_product_in_in_progress_orders(product_id: str):
+def check_product_in_in_progress_orders():
     """
-    Checks if the given product_id is present in any 'IN PROGRESS' orders.
+    Retrieves all products that are present in any 'IN PROGRESS' orders.
     """
     try:
-        # Reference to the 'orders' collection in Firestore
+        # Referencia a la colección 'orders' en Firestore
         orders_ref = db.collection('orders')
         
-        # Query to get all orders that are 'IN PROGRESS'
+        # Consulta para obtener todas las órdenes que están 'IN PROGRESS'
         in_progress_orders = orders_ref.where("status", "==", "IN PROGRESS").stream()
 
-        # Loop through each order and check if the product_id is in any orderItems
+        # Lista para almacenar los IDs de productos que están en órdenes "IN PROGRESS"
+        product_ids = set()  # Usamos un conjunto para evitar duplicados
+
+        # Recorremos cada orden en progreso y obtenemos los product_id de los orderItems
         for order in in_progress_orders:
             order_data = order.to_dict()
             for item in order_data.get('orderItems', []):
-                if item['product_id'] == product_id:
-                    return True  # Product found in an order
+                product_ids.add(item['product_id'])  # Añadimos los product_id al conjunto
 
-        # If no order contains the product_id, return False
-        return False
+        # Si no hay productos en órdenes "IN PROGRESS", lanzamos una excepción
+        if not product_ids:
+            raise Exception("No products found in 'IN PROGRESS' orders")
+
+        # Referencia a la colección 'products' para buscar los detalles de los productos
+        products_ref = db.collection('products')
+
+        # Lista para almacenar los detalles completos de los productos
+        products_details = []
+
+        # Buscar los productos en la colección 'products' según los product_id encontrados
+        for product_id in product_ids:
+            product = products_ref.document(product_id).get()
+            if product.exists:
+                products_details.append(product.to_dict())
+
+        # Si no se encuentran detalles de productos, lanzamos una excepción
+        if not products_details:
+            raise Exception("No product details found for the products in 'IN PROGRESS' orders")
+
+        return products_details
 
     except Exception as e:
-        raise Exception(f"Error checking for product in 'IN PROGRESS' orders: {str(e)}")
+        raise Exception(f"Error retrieving product details for 'IN PROGRESS' orders: {str(e)}")

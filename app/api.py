@@ -87,9 +87,9 @@ async def register_category(category: Category):
 async def get_products_by_category(category_id: str):
     return get_products_by_category_controller(category_id)
 
-@router.get("/orders/products/{product_id}")
-async def check_product_in_in_progress_orders(product_id: str):
-    return check_product_in_in_progress_orders_controller(product_id)
+@router.get("/orders/products")
+async def check_product_in_in_progress_orders():
+    return check_product_in_in_progress_orders_controller()
 
 
 #------------------------CATEGORIA--------------------------
