@@ -71,6 +71,27 @@ def close_table_service(table_id: str):
 
         # Update the table
         table_ref.update({
+            "status": "FINISHED",  # Set status to 'FREE'
+            "order_id": 0      # Set order_id to 0
+        })
+
+        return {"message": "Table closed successfully"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+def clean_table_service(table_id: str):
+    """
+    Update the status of the table to 'FREE' and set order_id to 0.
+    """
+    try:
+        table_ref = db.collection('tables').document(str(table_id))
+        table_doc = table_ref.get()
+
+        if not table_doc.exists:
+            raise HTTPException(status_code=404, detail="Table not found")
+
+        # Update the table
+        table_ref.update({
             "status": "FREE",  # Set status to 'FREE'
             "order_id": 0      # Set order_id to 0
         })
