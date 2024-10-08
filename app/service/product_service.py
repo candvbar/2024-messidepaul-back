@@ -186,36 +186,20 @@ def check_product_in_in_progress_orders():
         # Consulta para obtener todas las órdenes que están 'IN PROGRESS'
         in_progress_orders = orders_ref.where("status", "==", "IN PROGRESS").stream()
 
-        # Lista para almacenar los IDs de productos que están en órdenes "IN PROGRESS"
-        product_ids = set()  # Usamos un conjunto para evitar duplicados
+        # Lista para almacenar todos los productos de las órdenes "IN PROGRESS"
+        products_in_orders = []
 
-        # Recorremos cada orden en progreso y obtenemos los product_id de los orderItems
+        # Recorremos cada orden en progreso y obtenemos los productos de los orderItems
         for order in in_progress_orders:
             order_data = order.to_dict()
             for item in order_data.get('orderItems', []):
-                product_ids.add(item['product_id'])  # Añadimos los product_id al conjunto
+                products_in_orders.append(item)
 
-        # Si no hay productos en órdenes "IN PROGRESS", lanzamos una excepción
-        if not product_ids:
+        # Verificamos si no se encontró ningún producto
+        if not products_in_orders:
             raise Exception("No products found in 'IN PROGRESS' orders")
 
-        # Referencia a la colección 'products' para buscar los detalles de los productos
-        products_ref = db.collection('products')
-
-        # Lista para almacenar los detalles completos de los productos
-        products_details = []
-
-        # Buscar los productos en la colección 'products' según los product_id encontrados
-        for product_id in product_ids:
-            product = products_ref.document(product_id).get()
-            if product.exists:
-                products_details.append(product.to_dict())
-
-        # Si no se encuentran detalles de productos, lanzamos una excepción
-        if not products_details:
-            raise Exception("No product details found for the products in 'IN PROGRESS' orders")
-
-        return products_details
+        return products_in_orders
 
     except Exception as e:
-        raise Exception(f"Error retrieving product details for 'IN PROGRESS' orders: {str(e)}")
+        raise Exception(f"Error retrieving products from 'IN PROGRESS' orders: {str(e)}")
