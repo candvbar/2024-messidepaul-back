@@ -161,6 +161,9 @@ def get_products_by_category(category_ids_str: str):
         for product in products:
             product_data = product.to_dict()
             
+            # Add the Firestore document ID to the product data
+            product_data['id'] = product.id  
+            
             # Split the product's categories and check if any match the input category_ids
             product_categories = product_data['category'].split(', ')
             if any(category_id in product_categories for category_id in category_ids):
@@ -174,7 +177,6 @@ def get_products_by_category(category_ids_str: str):
 
     except Exception as e:
         raise Exception(f"Error retrieving products by categories: {str(e)}")
-
 def check_product_in_in_progress_orders():
     """
     Retrieves all products that are present in any 'IN PROGRESS' orders.
