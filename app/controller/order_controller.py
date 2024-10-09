@@ -31,16 +31,28 @@ def register_new_order(order: Order):
         product_id = item.get('product_id')
         if not product_id:
             raise HTTPException(status_code=400, detail="Product ID is required in the order item")
-        
+
         # Verificar si el producto existe en la base de datos
-        product = product_by_id(product_id)
-        if "error" in product:
+        product_data = product_by_id(product_id)
+        
+        # Debugging: Print product to see its structure
+        print(f"Fetched product from database: {product_data}")
+
+        # Access the nested product fields
+        product = product_data.get('product', {})
+        if not product:
             raise HTTPException(status_code=404, detail=f"Product with ID {product_id} not found")
 
-        # Validar que la cantidad de producto sea mayor que 0
-        amount = item.get('amount')
-        if not amount or amount <= 0:
-            raise HTTPException(status_code=400, detail="Product amount must be greater than zero")
+        # Validar que el nombre y precio coincidan con los de la base de datos
+        product_name = item.get('product_name')
+        product_price = item.get('product_price')
+
+        # Comparar con los valores de la base de datos
+        if product_name != product.get('name'):
+            raise HTTPException(status_code=400, detail=f"Product name for product ID {product_id} does not match")
+
+        if product_price != str(product.get('price')): 
+            raise HTTPException(status_code=400, detail=f"Product price for product ID {product_id} does not match")
 
     # Validaciones completas, proceder a crear la orden
     response = create_order(order_data)

@@ -9,3 +9,4 @@ class Product(BaseModel):
     description: str
     category: str
     calories: float
+    cost: Any

@@ -129,3 +129,21 @@ def add_items_to_order(order_id: str, new_items: List[OrderItem], total: str):
         raise HTTPException(status_code=500, detail=response["error"])
     
     return response
+
+def get_orders_by_status(status: str):
+    """
+    Retrieves all orders from the 'orders' collection with the specified status.
+    """
+    try:
+        orders_ref = db.collection('orders').where('status', '==', status).stream()
+        orders_list = []
+
+        for order in orders_ref:
+            order_data = order.to_dict()
+            order_data['id'] = order.id  # Add the document ID to the order data
+            orders_list.append(order_data)
+
+        return orders_list
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error retrieving orders: {str(e)}")
