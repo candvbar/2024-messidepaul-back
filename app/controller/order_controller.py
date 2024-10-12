@@ -25,6 +25,12 @@ def register_new_order(order: Order):
     if not order_items:
         raise HTTPException(status_code=400, detail="At least one order item is required")
 
+    # verificar que el amountOfPeople sea mayor a cero pero menor a la capacity de una table
+    amountOfPeople = order_data.get('amountOfPeople')
+    #verificar que amountOfPeople sea mayor a 0 y menor a la capacidad de una mesa
+    if amountOfPeople <= 0 or amountOfPeople > table.get('capacity'):
+        raise HTTPException(status_code=400, detail="Amount of people must be greater than 0 and less than or equal to the table capacity")
+
     for item in order_items:
         # Obtener product_id del item
         product_id = item.get('product_id')
@@ -128,11 +134,11 @@ def add_order_items(order_id: str, new_order_items_data: List[dict], total: str)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-'''def get_months_revenue():
+def get_months_revenue():
     try:
         response = get_months_revenue_service()
         return response
     except HTTPException as e:
         raise e
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))'''
+        raise HTTPException(status_code=500, detail=str(e))

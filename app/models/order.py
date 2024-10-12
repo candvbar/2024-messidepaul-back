@@ -5,6 +5,7 @@ from pydantic import BaseModel, Field
 # Modelo para registrar un nuevo producto
 class Order(BaseModel):
     status: str
+    amountOfPeople: int
     tableNumber: int
     date: str
     time: str

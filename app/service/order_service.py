@@ -148,7 +148,7 @@ def get_orders_by_status(status: str):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error retrieving orders: {str(e)}")
 
-'''def get_months_revenue_service():
+def get_months_revenue_service():
     try:
         #necesito ver todas las ordenes de mi base y armar una lista que asocie mes con el total de plata de cada orden en el mes
         #en este caso, lo que me interesa es el mes y el total de plata
@@ -164,4 +164,8 @@ def get_orders_by_status(status: str):
             if month in months_revenue:
                 months_revenue[month] += float(total)  
             else:
-                months_revenue[month] = float(total)'''
+                months_revenue[month] = float(total)
+
+        return months_revenue
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error retrieving orders: {str(e)}")
