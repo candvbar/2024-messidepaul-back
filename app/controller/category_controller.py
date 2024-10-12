@@ -69,35 +69,41 @@ def update_category_name_controller(category_id: str, new_name: str):
 
 def get_category_revenue_controller():
     try:
-        orders = get_orders_by_status('FINALIZED')  # Retrieve finalized orders
+        orders = get_orders_by_status('FINALIZED')
         category_revenue = {}
 
-        # Loop through all orders and collect product information
         for order in orders:
             for item in order['orderItems']:
                 product_id = item['product_id']
                 amount = item['amount']
 
-                # Retrieve product details by product_id
-                product = product_by_id(product_id)  # Assumes you have a function to fetch product by ID
+                product = product_by_id(product_id)
 
-                # Check if 'category' exists in the product data
-                if 'product' in product and 'category' in product['product']:
-                    categories = product['product']['category'].split(',')
+                if 'product' in product:
+                    # Extract the category ID from the product
+                    category = product['product'].get('category')
 
-                    for category in categories:
-                        category = category.strip()
-                        if category not in category_revenue:
-                            category_revenue[category] = 0
+                    category_name = None
+                    
+                    # Check if category is a string (category ID)
+                    if isinstance(category, str):
+                        category_data = get_category_by_id_controller(category.strip())  # Fetch category by ID
+                        category_name = category_data.get('name') if category_data else None
+                    elif isinstance(category, dict):
+                        category_name = category.get('name')  # If category is a dict
 
-                        # Use the price from the product dictionary
-                        price = float(product['product']['price'])  # Make sure to convert price to float if necessary
-                        cost = float(product['product']['cost'])  # Make sure to convert cost to float if necessary
-                        category_revenue[category] += (price - cost) * amount
-                else:
-                    print(f"Product with ID {product_id} does not have a category.")
+                    # Check if we have a valid category name
+                    if category_name:
+                        if category_name not in category_revenue:
+                            category_revenue[category_name] = 0
+                        price = float(product['product']['price'])
+                        cost = float(product['product']['cost'])
+                        category_revenue[category_name] += (price - cost) * amount
+                    else:
+                        print(f"Product with ID {product_id} does not have a valid category name.")
 
         return category_revenue
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error calculating category revenue: {str(e)}")
+
