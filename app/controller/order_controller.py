@@ -1,5 +1,5 @@
 from typing import List
-from app.service.order_service import create_order, finalize_order, get_order_by_id, get_all_orders, add_items_to_order
+from app.service.order_service import create_order, finalize_order, get_months_revenue_service, get_order_by_id, get_all_orders, add_items_to_order
 from app.models.order import Order
 from app.models.order import OrderItem
 from app.controller.table_controller import associate_order_with_table_controller
