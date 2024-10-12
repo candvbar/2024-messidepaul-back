@@ -158,12 +158,21 @@ def get_months_revenue_service():
         for order in orders:
             order_data = order.to_dict()
             date = order_data.get('date')
+            #necesito mes y año juntos
+            #ejemplo: 2022-01
+            #ejemplo: 2022-02
+            # i need to join month and year together
+            # example: 2022-01
+            # example: 2022-02
+            #
             month = date.split('-')[1]
+            year = date.split('-')[0]
+            month_year = f"{year}-{month}"
             total = order_data.get('total')
-            if month in months_revenue:
-                months_revenue[month] += float(total)  
+            if month_year in months_revenue:
+                months_revenue[month_year] += float(total)  
             else:
-                months_revenue[month] = float(total)
+                months_revenue[month_year] = float(total)
 
         return months_revenue
     except Exception as e:
