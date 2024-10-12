@@ -127,3 +127,12 @@ def add_order_items(order_id: str, new_order_items_data: List[dict], total: str)
         raise e
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+'''def get_months_revenue():
+    try:
+        response = get_months_revenue_service()
+        return response
+    except HTTPException as e:
+        raise e
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))'''

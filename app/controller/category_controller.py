@@ -92,7 +92,8 @@ def get_category_revenue_controller():
 
                         # Use the price from the product dictionary
                         price = float(product['product']['price'])  # Make sure to convert price to float if necessary
-                        category_revenue[category] += price * amount
+                        cost = float(product['product']['cost'])  # Make sure to convert cost to float if necessary
+                        category_revenue[category] += (price - cost) * amount
                 else:
                     print(f"Product with ID {product_id} does not have a category.")
 
