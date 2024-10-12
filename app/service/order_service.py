@@ -142,7 +142,6 @@ def get_orders_by_status(status: str):
             order_data = order.to_dict()
             order_data['id'] = order.id  # Add the document ID to the order data
             orders_list.append(order_data)
-        print(orders_list)
         return orders_list
 
     except Exception as e:

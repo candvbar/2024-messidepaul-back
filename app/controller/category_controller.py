@@ -80,30 +80,37 @@ def get_category_revenue_controller():
                 product = product_by_id(product_id)
 
                 if 'product' in product:
-                    # Extract the category ID from the product
+                    # Extract the category from the product
                     category = product['product'].get('category')
 
-                    category_name = None
-                    
-                    # Check if category is a string (category ID)
-                    if isinstance(category, str):
-                        category_data = get_category_by_id_controller(category.strip())  # Fetch category by ID
-                        category_name = category_data.get('name') if category_data else None
-                    elif isinstance(category, dict):
-                        category_name = category.get('name')  # If category is a dict
+                    # Initialize a list to hold category IDs
+                    categories = []
 
-                    # Check if we have a valid category name
-                    if category_name:
-                        if category_name not in category_revenue:
-                            category_revenue[category_name] = 0
-                        price = float(product['product']['price'])
-                        cost = float(product['product']['cost'])
-                        category_revenue[category_name] += (price - cost) * amount
-                    else:
-                        print(f"Product with ID {product_id} does not have a valid category name.")
+                    if isinstance(category, str):
+                        # Split the category string into a list of IDs
+                        categories = [cat.strip() for cat in category.split(',')]  # Split by commas
+                    elif isinstance(category, list):
+                        categories = category  # If it's already a list, use it directly
+
+                    for cat_id in categories:
+                        category_data = get_category_by_id_controller(cat_id.strip())  # Fetch category by ID
+                        category_name = category_data.get('name') if category_data else None
+
+                        # Check if we have a valid category name
+                        if category_name:
+                            if category_name not in category_revenue:
+                                category_revenue[category_name] = 0
+                            price = float(product['product'].get('price', 0))  # Use .get() to avoid KeyError
+                            cost = float(product['product'].get('cost', 0))      # Use .get() to avoid KeyError
+                            category_revenue[category_name] += (price - cost) * amount
+                        else:
+                            print(f"Product with ID {product_id} does not have a valid category name for category ID {cat_id}.")
+                else:
+                    print(f"Product with ID {product_id} not found or does not contain valid data.")
 
         return category_revenue
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error calculating category revenue: {str(e)}")
+
 
