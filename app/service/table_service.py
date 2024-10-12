@@ -41,17 +41,14 @@ def update_table_status(table_id: str, new_status: str):
         except Exception as e:
             return {"error": str(e)}
 
-def associate_order_with_table(table_id: str, order_id: int):
+def associate_order_with_table(table_id: str, order_id: str):
     """
     Servicio para asociar un order ID con una tabla.
     """
-    print(table_id)
-    print(order_id)
     try:
         table_ref = db.collection('tables').document(table_id)
-        print(table_ref)
         if table_ref.get().exists:
-            table_ref.update({"order_id": order_id})  # Assuming order_id is a field in your table document
+            table_ref.update({"order_id": str(order_id)})
             return {"message": "Order associated with table successfully"}
         else:
             return {"error": "Table not found"}

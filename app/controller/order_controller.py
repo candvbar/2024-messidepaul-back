@@ -2,9 +2,10 @@ from typing import List
 from app.service.order_service import create_order, finalize_order, get_order_by_id, get_all_orders, add_items_to_order
 from app.models.order import Order
 from app.models.order import OrderItem
+from app.controller.table_controller import associate_order_with_table_controller
 from fastapi import HTTPException
 from app.service.product_service import product_by_id
-from app.service.table_service import get_table_by_id
+from app.service.table_service import get_table_by_id, update_table_status
 
 def register_new_order(order: Order):
     order_data = order.dict()
@@ -18,8 +19,6 @@ def register_new_order(order: Order):
     table = get_table_by_id(str(table_id))  # Asegúrate de que sea string si es necesario
     if not table:
         raise HTTPException(status_code=404, detail=f"Table with ID {table_id} not found")
-
-    print(order_data)
 
     # Obtener datos de los productos desde la orden
     order_items = order_data.get('orderItems', [])
@@ -58,7 +57,12 @@ def register_new_order(order: Order):
     response = create_order(order_data)
     if "error" in response:
         raise HTTPException(status_code=500, detail=response["error"])
-
+    # quiero llamar a associate_order_with_table para asociar la orden con la mesa
+    response_table = associate_order_with_table_controller(str(table_id), str(response["order_id"]))
+    if "error" in response_table:
+        raise HTTPException(status_code=500, detail=response_table["error"])
+    #quiero retornar response_table y response juntos
+    response["table"] = response_table
     return response
 
 def finalize_order_controller(order_id: str):
