@@ -66,14 +66,12 @@ def update_product_price(product_id: str, new_price):
         if not isinstance(new_price, str):
             raise HTTPException(status_code=400, detail="Price must be a string")
 
-        # Intentamos convertir a float primero
-        new_price_float = float(new_price)
-
-        # Si necesitas una validación adicional para el int, puedes agregarla
-        if new_price_float.is_integer():
-            new_price = int(new_price_float)
-        else:
-            new_price = new_price_float
+        try:
+            price = float(new_price)  # Intentamos convertir a float
+            if price <= 0:
+                raise HTTPException(status_code=400, detail="Price cannot be negative or zero")
+        except ValueError:
+            raise HTTPException(status_code=400, detail="Price must be a number")
 
     except ValueError:
         # Si falla la conversión, lanzamos una excepción de validación

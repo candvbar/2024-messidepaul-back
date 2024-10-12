@@ -60,7 +60,7 @@ async def products():
     return get_products()
 
 @router.put("/products/price/{product_id}/{new_price}")
-async def update_price(product_id: str, new_price: float):
+async def update_price(product_id: str, new_price: str):
     return update_product_price(product_id, new_price)
 
 @router.put("/products/description/{product_id}/{new_description}")
