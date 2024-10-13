@@ -7,7 +7,7 @@ from fastapi import HTTPException
 
 def create_order(order_data):
     try:
-        table_id = str(order_data.get('tableNumber'))
+        #table_id = str(order_data.get('tableNumber'))
         next_id = get_next_order_id_from_existing()
         # Crear una nueva orden
         orders_ref = db.collection('orders')
@@ -15,9 +15,9 @@ def create_order(order_data):
         new_order_ref.set(order_data)  # Crear la nueva orden en Firebase
 
         # Cambiar el estado de la mesa a 'BUSY'
-        print(table_id)
+        '''print(table_id)
         if table_id:
-            update_table_status(table_id, "BUSY")
+            update_table_status(table_id, "BUSY")'''
 
         return {
             "message": "Order created successfully",
