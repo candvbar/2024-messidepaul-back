@@ -1,5 +1,5 @@
 from typing import List
-from app.service.order_service import create_order, finalize_order, get_months_revenue_service, get_order_by_id, get_all_orders, add_items_to_order
+from app.service.order_service import create_order, finalize_order, get_months_revenue_service, get_order_by_id, get_all_orders, add_items_to_order, get_average_per_person_service, get_average_per_order_service
 from app.models.order import Order
 from app.models.order import OrderItem
 from app.controller.table_controller import associate_order_with_table_controller
@@ -137,6 +137,24 @@ def add_order_items(order_id: str, new_order_items_data: List[dict], total: str)
 def get_months_revenue():
     try:
         response = get_months_revenue_service()
+        return response
+    except HTTPException as e:
+        raise e
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+def get_average_per_person_controller(year: str, month: str):
+    try:
+        response = get_average_per_person_service(year, month)
+        return response
+    except HTTPException as e:
+        raise e
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+def get_average_per_order_controller(year: str, month: str):
+    try:
+        response = get_average_per_order_service(year, month)
         return response
     except HTTPException as e:
         raise e

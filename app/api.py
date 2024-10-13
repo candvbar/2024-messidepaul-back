@@ -8,7 +8,7 @@ from app.controller.user_controller import login, register, handle_forgot_passwo
 from app.controller.product_controller import check_product_in_in_progress_orders_controller, get_products_by_category_controller, register_new_product, get_products, update_product_price, update_product_description, delete_product_by_id, get_product_by_id, update_product_categories, add_food_calories
 from app.controller.category_controller import delete_category_controller, get_all_categories, get_category_by_id_controller, register_new_category, update_category_name_controller, get_category_revenue_controller
 from app.controller.table_controller import associate_order_with_table_controller, clean_table_controller, close_table_controller, get_table_by_id_controller, get_tables_controller, update_table_status_controller
-from app.controller.order_controller import get_months_revenue, register_new_order, finalize_order_controller, get_orders, get_order_controller, add_order_items
+from app.controller.order_controller import get_average_per_order_controller, get_average_per_person_controller, get_months_revenue, register_new_order, finalize_order_controller, get_orders, get_order_controller, add_order_items
 from app.models.order_item import OrderItem
 from app.models.table import Table
 
@@ -189,3 +189,11 @@ async def get_category_revenue():
 @router.get("/monthly-revenue")
 async def get_monthly_revenue():
     return get_months_revenue()
+
+@router.get("/average_per_person/{year}/{month}")
+async def get_average_per_person(year: str, month: str):
+    return get_average_per_person_controller(year, month)
+
+@router.get("/averare_per_order/{year}/{month}")
+async def get_average_per_order(year: str, month: str):
+    return get_average_per_order_controller(year, month)
