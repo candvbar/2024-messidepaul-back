@@ -46,6 +46,7 @@ def associate_order_with_table(table_id: str, order_id: str):
         table_ref = db.collection('tables').document(table_id)
         if table_ref.get().exists:
             table_ref.update({"order_id": str(order_id)})
+            update_table_status(table_id, "BUSY")
             return {"message": "Order associated with table successfully"}
         else:
             return {"error": "Table not found"}

@@ -164,6 +164,8 @@ def get_average_per_order_controller(year: str, month: str):
 def assign_order_to_table_controller(order_id: str, table_id: int):
     try:
         response = assign_order_to_table_service(order_id, table_id)
+        response2 = associate_order_with_table_controller(str(table_id), order_id)
+        response["table"] = response2
         return response
     except HTTPException as e:
         raise e

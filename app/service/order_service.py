@@ -283,6 +283,8 @@ def assign_order_to_table_service(order_id: str, table_id: int):
             "tableNumber": table_id
         })
 
+        
+
         return {"message": "Order assigned to table successfully"}
 
     except Exception as e:
