@@ -1,7 +1,7 @@
 from calendar import monthrange
 from typing import Dict, List
 from app.db.firebase import db
-from app.service.table_service import update_table_status
+from app.service.table_service import get_table_by_id, update_table_status
 from app.models.order_item import OrderItem
 from fastapi import HTTPException
 
@@ -53,7 +53,6 @@ def get_order_by_id(order_id: str):
     try:
         order_ref = db.collection('orders').document(order_id)
         order_doc = order_ref.get()
-        print(order_doc.to_dict())
         if not order_doc.exists:
             return None
         return order_doc.to_dict()
@@ -259,3 +258,32 @@ def get_average_per_order_service(year: str, month: str) -> Dict[str, float]:
         return average_per_order
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error retrieving orders: {str(e)}")
+
+def assign_order_to_table_service(order_id: str, table_id: int):
+    try:
+        #el estado de a orden que me llega tiene ser "INACTIVE" porque significa que no tiene una mesa asignada, la mesa se asigna con el table_id, y deberia chequear que este free esa mesa
+
+        #verifico que la orden exista
+        if not get_order_by_id(order_id):
+            raise HTTPException(status_code=404, detail="Order not found")
+        #verifico que tenga status inactive
+        if get_order_by_id(order_id).get("status") != "INACTIVE":
+            raise HTTPException(status_code=400, detail="Order status is not INACTIVE")
+        #verifico que la mesa exista
+        if not get_table_by_id(table_id):
+            raise HTTPException(status_code=404, detail="Table not found")
+        #verifico que la mesa tenga status FREE
+        if get_table_by_id(str(table_id)).get("status") != "FREE":
+            raise HTTPException(status_code=400, detail="Table status is not FREE")
+        #entonces ahora si puedo a la orden ponerle estado "IN PROGRESS" y asignarle el tableNumber a la orden
+
+        order_ref = db.collection('orders').document(order_id)
+        order_ref.update({
+            "status": "IN PROGRESS",
+            "tableNumber": table_id
+        })
+
+        return {"message": "Order assigned to table successfully"}
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
