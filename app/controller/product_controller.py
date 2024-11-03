@@ -1,4 +1,4 @@
-from app.service.product_service import check_product_in_in_progress_orders, check_product_name_exists, create_product, get_products_by_category, products, update_product_newprice, update_product_newdescription, delete_product, product_by_id, update_product_newcategories, add_calories
+from app.service.product_service import check_product_in_in_progress_orders, check_product_name_exists, create_product, get_products_by_category, lower_stock, products, update_product_newprice, update_product_newdescription, delete_product, product_by_id, update_product_newcategories, add_calories, update_stock
 from app.models.product import Product
 from app.service.category_service import check_multiple_categories_exist
 from fastapi import HTTPException
@@ -137,6 +137,20 @@ def get_products_by_category_controller(category_id: str):
 def check_product_in_in_progress_orders_controller():
     try:
         response = check_product_in_in_progress_orders()
+        return response
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+def update_stock_controller(product_id, stock):
+    try: 
+        response = update_stock(product_id, stock)
+        return response
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+def lower_stock_controller(product_id, stock):
+    try: 
+        response = lower_stock(product_id, stock)
         return response
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

@@ -11,3 +11,4 @@ class Product(BaseModel):
     calories: float
     cost: Any
     imageUrl: str
+    stock: str

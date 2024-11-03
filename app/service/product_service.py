@@ -205,3 +205,38 @@ def check_product_in_in_progress_orders():
 
     except Exception as e:
         raise Exception(f"Error retrieving products from 'IN PROGRESS' orders: {str(e)}")
+
+def update_stock(product_id: str, new_stock: str):
+    try:
+        product_ref = db.collection('products').document(product_id)
+        
+        # Retrieve the current stock and convert to integer
+        current_stock = int(product_ref.get().to_dict()["stock"])
+        
+        # Convert new_stock to integer and add to current stock
+        updated_stock = current_stock + int(new_stock)
+        
+        # Update the stock in the database
+        product_ref.update({"stock": str(updated_stock)})
+        
+        return {"message": "Product stock updated successfully"}
+    except Exception as e:
+        return {"error": str(e)}
+
+    
+def lower_stock(product_id: str, new_stock: str):
+    try:
+        product_ref = db.collection('products').document(product_id)
+        
+        # Retrieve the current stock and convert to integer
+        current_stock = int(product_ref.get().to_dict()["stock"])
+        
+        # Convert new_stock to integer and add to current stock
+        updated_stock = current_stock - int(new_stock)
+        
+        # Update the stock in the database
+        product_ref.update({"stock": str(updated_stock)})
+        
+        return {"message": "Product stock updated successfully"}
+    except Exception as e:
+        return {"error": str(e)}
