@@ -11,3 +11,4 @@ class Order(BaseModel):
     time: str
     total: str
     orderItems: List[OrderItem]
+    employee: str
