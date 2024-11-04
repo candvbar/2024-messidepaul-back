@@ -6,7 +6,11 @@ def create_user(user_data):
         doc_ref = db.collection("users").document(user_data.uid)
         doc_ref.set({
             "name": user_data.name,
-            "birthday": user_data.birthday
+            "birthday": user_data.birthday,
+            "imageUrl": user_data.imageUrl,
+            "level": "1",
+            "globalPoints": "0",
+            "monthlyPoints": "0"
         })
         return {"message": "User data saved successfully"}
     except Exception as e:
@@ -49,3 +53,26 @@ def delete_user(uid):
         return {"message": "User deleted successfully"}
     except Exception as e:
         return {"error": str(e)}
+
+def ranking():
+    try:
+        user_ref = db.collection('users')
+        users = user_ref.stream()
+        user_data = sorted(
+            [
+                {
+                    "name": user.get("name"),
+                    "imageUrl": user.get("imageUrl"),
+                    "monthlyPoints": int(user.get("monthlyPoints"))
+                }
+                for user in users
+            ],
+            key=lambda x: x["monthlyPoints"],
+            reverse=True
+        )
+
+        return user_data
+    except Exception as e:
+        return {"error": str(e)}
+
+     

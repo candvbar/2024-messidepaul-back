@@ -11,6 +11,7 @@ class UserRegister(BaseModel):
     uid: str
     name: str
     birthday: str
+    imageUrl: str
 
 # Modelo para recuperación de contraseña
 class UserForgotPassword(BaseModel):

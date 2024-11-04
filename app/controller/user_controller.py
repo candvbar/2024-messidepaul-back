@@ -1,4 +1,4 @@
-from app.service.user_service import create_user, get_user_by_email, forgot_password, user_by_id, delete_user
+from app.service.user_service import create_user, get_user_by_email, forgot_password, ranking, user_by_id, delete_user
 from app.models.user import TokenData, UserLogin, UserRegister, UserForgotPassword
 from firebase_admin import auth
 from fastapi import HTTPException
@@ -50,3 +50,10 @@ def delete_user_by_id(uid: str):
     if "error" in response:
         raise HTTPException(status_code=500, detail=response["error"])
     return {"message": "Product deleted successfully"}
+
+def ranking_controller():
+    try: 
+        response = ranking()
+        return response
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
