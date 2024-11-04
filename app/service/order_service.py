@@ -4,6 +4,7 @@ from app.db.firebase import db
 from app.service.table_service import get_table_by_id, update_table_status
 from app.models.order_item import OrderItem
 from fastapi import HTTPException
+from google.cloud.firestore import Increment
 
 def create_order(order_data):
     try:
@@ -29,7 +30,7 @@ def create_order(order_data):
 
 def finalize_order(order_id: str):
     """
-    Finalizes an order.
+    Finalizes an order and updates the employee's points.
     """
     try:
         # Get the order by its ID
@@ -39,10 +40,22 @@ def finalize_order(order_id: str):
         if not order.exists:
             raise HTTPException(status_code=404, detail="Order not found")
 
+        # Extract employee UID from the order
+        employee_uid = order.to_dict().get("employee")
+        if not employee_uid:
+            raise HTTPException(status_code=400, detail="Employee UID missing in order")
+
         # Update the order status to finalized
         order_ref.update({"status": "FINALIZED"})
 
-        return {"message": "Order finalized successfully"}
+        # Update the employee's points
+        user_ref = db.collection("users").document(employee_uid)
+        user_ref.update({
+            "globalPoints": Increment(1),
+            "monthlyPoints": Increment(1)
+        })
+
+        return {"message": "Order finalized successfully, points updated"}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
