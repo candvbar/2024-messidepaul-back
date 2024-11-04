@@ -51,9 +51,13 @@ def user_by_id(uid):
                 
                 if level_doc.exists:  # Verificar si el documento del nivel existe
                     level_data = level_doc.to_dict()  # Obtener datos del nivel
-                    user_data['level'] = level_data.get("name")  # Agregar el nombre del nivel al diccionario del usuario
+                    # Crear una lista que contenga el ID y el nombre del nivel
+                    user_data['level'] = {
+                        'id': level_id,  # ID del nivel
+                        'name': level_data.get("name")  # Nombre del nivel
+                    }
             
-            return user_data  # Retornar los datos del usuario, ahora con el nombre del nivel incluido
+            return user_data  # Retornar los datos del usuario, ahora con el nivel incluido
         else:
             return {"error": "User not found"}
     except Exception as e:
@@ -89,4 +93,27 @@ def ranking():
     except Exception as e:
         return {"error": str(e)}
 
-     
+def rewards(level_id):
+    try:
+        # Referencia al documento del nivel
+        level_ref = db.collection('levels').document(level_id)
+        level_doc = level_ref.get()  # Obtener el documento del nivel
+        
+        if level_doc.exists:  # Verificar si el nivel existe
+            level_data = level_doc.to_dict()
+            rewards_ids = level_data.get("rewards", "").split(", ")  # Obtener y dividir los IDs de rewards
+            
+            rewards_list = []  # Lista para almacenar los datos de cada recompensa
+            for reward_id in rewards_ids:
+                # Referencia al documento de cada recompensa
+                reward_ref = db.collection('rewards').document(reward_id)
+                reward_doc = reward_ref.get()
+                
+                if reward_doc.exists:  # Verificar si la recompensa existe
+                    rewards_list.append(reward_doc.to_dict())  # Agregar los datos de la recompensa a la lista
+            
+            return rewards_list # Retornar las recompensas como un diccionario
+        else:
+            return {"error": "Level not found"}
+    except Exception as e:
+        return {"error": str(e)}

@@ -4,7 +4,7 @@ from app.models.user import UserLogin, UserRegister, UserForgotPassword, TokenDa
 from app.models.product import Product
 from app.models.category import Category
 from app.models.order import Order
-from app.controller.user_controller import login, ranking_controller, register, handle_forgot_password, get_user_by_id, delete_user_by_id, token
+from app.controller.user_controller import login, ranking_controller, register, handle_forgot_password, get_user_by_id, delete_user_by_id, rewards_controller, token
 from app.controller.product_controller import check_product_in_in_progress_orders_controller, get_products_by_category_controller, lower_stock_controller, register_new_product, get_products, update_product_price, update_product_description, delete_product_by_id, get_product_by_id, update_product_categories, add_food_calories, update_stock_controller
 from app.controller.category_controller import delete_category_controller, get_all_categories, get_category_by_id_controller, register_new_category, update_category_name_controller, get_category_revenue_controller
 from app.controller.table_controller import associate_order_with_table_controller, clean_table_controller, close_table_controller, get_table_by_id_controller, get_tables_controller, update_table_status_controller
@@ -217,3 +217,7 @@ async def update_stock(product_id: str, stock: str):
 @router.put("/lower-stock/{product_id}/{stock}")
 async def lower_stock(product_id: str, stock: str):
     return lower_stock_controller(product_id, stock)
+
+@router.get("/rewards/{level_id}")
+async def rewards(level_id: str):
+    return rewards_controller(level_id)
