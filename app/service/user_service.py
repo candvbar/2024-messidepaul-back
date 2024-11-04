@@ -40,11 +40,25 @@ def user_by_id(uid):
         user_doc = user_ref.get()  # Obtener el documento
         
         if user_doc.exists:  # Verificar si el documento existe
-            return user_doc.to_dict()  # Retornar los datos como un diccionario
+            user_data = user_doc.to_dict()  # Obtener datos como un diccionario
+            
+            # Obtener el nivel del usuario
+            level_id = user_data.get("level")
+            if level_id:
+                # Referencia al documento del nivel
+                level_ref = db.collection('levels').document(level_id)
+                level_doc = level_ref.get()  # Obtener el documento del nivel
+                
+                if level_doc.exists:  # Verificar si el documento del nivel existe
+                    level_data = level_doc.to_dict()  # Obtener datos del nivel
+                    user_data['level'] = level_data.get("name")  # Agregar el nombre del nivel al diccionario del usuario
+            
+            return user_data  # Retornar los datos del usuario, ahora con el nombre del nivel incluido
         else:
             return {"error": "User not found"}
     except Exception as e:
         return {"error": str(e)}
+
 
 def delete_user(uid):
     try:
