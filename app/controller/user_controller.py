@@ -1,4 +1,4 @@
-from app.service.user_service import check_level, create_user, get_top_level_status, get_user_by_email, forgot_password, level, ranking, rewards, user_by_id, delete_user
+from app.service.user_service import check_level, create_user, get_top_level_status, get_user_by_email, forgot_password, level, ranking, reset_monthly_points, rewards, user_by_id, delete_user
 from app.models.user import TokenData, UserLogin, UserRegister, UserForgotPassword
 from firebase_admin import auth
 from fastapi import HTTPException
@@ -82,6 +82,13 @@ def check_level_controller(uid: str):
 def get_top_level_status_controller(level_id: str):
     try:
         response = get_top_level_status(level_id)
+        return response
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+def reset_monthly_points_controller():
+    try:
+        response = reset_monthly_points()
         return response
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
