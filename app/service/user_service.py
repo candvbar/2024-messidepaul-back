@@ -166,3 +166,30 @@ def check_level(uid):
             return {"error": "User not found"}
     except Exception as e:
         return {"error": str(e)}
+
+def get_top_level_status(level_id):
+    try:
+        # Stream all levels from Firestore
+        levels_ref = db.collection('levels').stream()
+        
+        # Collect level IDs, converting them to integers for comparison
+        levels_list = []
+        for level in levels_ref:
+            level_data = level.to_dict()
+            level_data['id'] = level.id  # Use document ID as the level ID
+            levels_list.append(int(level_data['id']))
+        print(levels_list)
+        # Ensure there are valid level IDs to compare
+        if not levels_list or (int(level_id) not in levels_list):
+            return {"error": "No levels found or levels have invalid IDs."}
+        
+        # Find the highest level ID
+        max_level_id = max(levels_list)
+        
+        # Check if the provided level_id (converted to int) is the highest level
+        return {"isTopLevel": int(level_id) == max_level_id}
+    
+    except ValueError:
+        return {"error": "Invalid level ID format, unable to convert to integer."}
+    except Exception as e:
+        return {"error": str(e)}

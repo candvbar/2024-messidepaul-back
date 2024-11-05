@@ -4,7 +4,7 @@ from app.models.user import UserLogin, UserRegister, UserForgotPassword, TokenDa
 from app.models.product import Product
 from app.models.category import Category
 from app.models.order import Order
-from app.controller.user_controller import check_level_controller, level_controller, login, ranking_controller, register, handle_forgot_password, get_user_by_id, delete_user_by_id, rewards_controller, token
+from app.controller.user_controller import check_level_controller, get_top_level_status_controller, level_controller, login, ranking_controller, register, handle_forgot_password, get_user_by_id, delete_user_by_id, rewards_controller, token
 from app.controller.product_controller import check_product_in_in_progress_orders_controller, get_products_by_category_controller, lower_stock_controller, register_new_product, get_products, update_product_price, update_product_description, delete_product_by_id, get_product_by_id, update_product_categories, add_food_calories, update_stock_controller
 from app.controller.category_controller import delete_category_controller, get_all_categories, get_category_by_id_controller, register_new_category, update_category_name_controller, get_category_revenue_controller
 from app.controller.table_controller import associate_order_with_table_controller, clean_table_controller, close_table_controller, get_table_by_id_controller, get_tables_controller, update_table_status_controller
@@ -229,3 +229,7 @@ async def level(level_id: str):
 @router.get("/check-level/{uid}")
 async def check_level(uid: str):
     return check_level_controller(uid)
+
+@router.get("/top-level-status/{level_id}")
+async def get_top_level_status(level_id: str):
+    return get_top_level_status_controller(level_id)
