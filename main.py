@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from app.scheduler import start_scheduler
 from app.api import router
 
 app = FastAPI()
@@ -20,6 +21,7 @@ app.add_middleware(
     allow_headers=["*"],  # Permitir todos los encabezados
 )
 
+start_scheduler()
 
 # Incluir las rutas de tu API
 app.include_router(router)
