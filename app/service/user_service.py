@@ -198,11 +198,11 @@ def get_top_level_status(level_id):
     except Exception as e:
         return {"error": str(e)}
 
-def reset_monthly_points():
+'''def reset_monthly_points():
     """
     Resets monthly points for all users in the Firestore database.
     """
     users_ref = db.collection("users").stream()
     for user in users_ref:
         user_ref = db.collection("users").document(user.id)
-        user_ref.update({"monthlyPoints": "0"})  # Resetting to zero
+        user_ref.update({"monthlyPoints": "0"})  # Resetting to zero'''
