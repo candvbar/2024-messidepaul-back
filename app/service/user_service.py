@@ -156,11 +156,15 @@ def check_level(uid):
                 # Check if user qualifies for the next level
                 if current_global_points >= next_level_points_required:
                     # Update user's level to the next level (convert back to string)
-                    user_ref.update({"level": str(current_level + 1)})
+                    new_level = current_level + 1
+                    user_ref.update({"level": str(new_level)})
                     # Update the user_data to reflect the new level
-                    user_data["level"] = str(current_level + 1)
-
-            # Return only user data with the updated level
+                    user_data["level"] = str(new_level)
+                    user_data["level_updated"] = True  # Flag to indicate level was updated
+                else:
+                    user_data["level_updated"] = False  # No level change
+                
+            # Return user data with level update status
             return user_data
         else:
             return {"error": "User not found"}
