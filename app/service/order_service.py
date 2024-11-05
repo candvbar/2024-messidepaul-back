@@ -1,10 +1,9 @@
 from calendar import monthrange
 from typing import Dict, List
 from app.db.firebase import db
-from app.service.table_service import get_table_by_id, update_table_status
+from app.service.table_service import get_table_by_id
 from app.models.order_item import OrderItem
 from fastapi import HTTPException
-from google.cloud.firestore import Increment
 
 def create_order(order_data):
     try:

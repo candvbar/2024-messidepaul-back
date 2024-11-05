@@ -131,3 +131,38 @@ def level(level_id):
             return {"error": "Level not found"}
     except Exception as e:
         return {"error": str(e)}
+
+def check_level(uid):
+    try:
+        # Reference to the user's document
+        user_ref = db.collection('users').document(uid)
+        user_doc = user_ref.get()  # Get the document
+        
+        if user_doc.exists:  # Check if the document exists
+            user_data = user_doc.to_dict()  # Get data as a dictionary
+            
+            # Get the user's current level as a string and convert it to int
+            current_level = int(user_data.get("level", "1"))  # Default to level 1 if missing
+            current_global_points = int(user_data.get("globalPoints", "0"))  # Convert to int
+            
+            # Get the points required for the next level from the levels collection
+            next_level_ref = db.collection("levels").document(str(current_level + 1)).get()
+            
+            if next_level_ref.exists:
+                next_level_data = next_level_ref.to_dict()
+                # Convert points required for the next level to int
+                next_level_points_required = int(next_level_data['points'])  # Convert to int
+                
+                # Check if user qualifies for the next level
+                if current_global_points >= next_level_points_required:
+                    # Update user's level to the next level (convert back to string)
+                    user_ref.update({"level": str(current_level + 1)})
+                    # Update the user_data to reflect the new level
+                    user_data["level"] = str(current_level + 1)
+
+            # Return only user data with the updated level
+            return user_data
+        else:
+            return {"error": "User not found"}
+    except Exception as e:
+        return {"error": str(e)}
