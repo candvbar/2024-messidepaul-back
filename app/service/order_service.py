@@ -48,11 +48,26 @@ def finalize_order(order_id: str):
         # Update the order status to finalized
         order_ref.update({"status": "FINALIZED"})
 
-        # Update the employee's points
+        # Fetch the user's current points
         user_ref = db.collection("users").document(employee_uid)
+        user_data = user_ref.get()
+
+        if not user_data.exists:
+            raise HTTPException(status_code=404, detail="User not found")
+
+        # Get current points and convert to int, default to 0 if missing
+        user_dict = user_data.to_dict()
+        current_global_points = int(user_dict.get("globalPoints", "0"))
+        current_monthly_points = int(user_dict.get("monthlyPoints", "0"))
+
+        # Increment points and convert back to string
+        updated_global_points = str(current_global_points + 1)
+        updated_monthly_points = str(current_monthly_points + 1)
+
+        # Update the user's points as strings
         user_ref.update({
-            "globalPoints": Increment(1),
-            "monthlyPoints": Increment(1)
+            "globalPoints": updated_global_points,
+            "monthlyPoints": updated_monthly_points
         })
 
         return {"message": "Order finalized successfully, points updated"}

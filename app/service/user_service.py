@@ -117,3 +117,17 @@ def rewards(level_id):
             return {"error": "Level not found"}
     except Exception as e:
         return {"error": str(e)}
+
+def level(level_id):
+    try:
+        # Referencia al documento del nivel
+        level_ref = db.collection('levels').document(level_id)
+        level_doc = level_ref.get()  # Obtener el documento del siguiente nivel
+        
+        if level_doc.exists:  # Verificar si el nivel existe
+            level_data = level_doc.to_dict()
+            return level_data
+        else:
+            return {"error": "Level not found"}
+    except Exception as e:
+        return {"error": str(e)}
