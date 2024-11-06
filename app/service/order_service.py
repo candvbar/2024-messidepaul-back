@@ -340,3 +340,16 @@ def assign_order_to_table_service(order_id: str, table_id: int):
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+def assign_employee_to_order(order_id, uid):
+    order_ref = db.collection("orders").document(order_id)
+    
+    # Update the order with the employee UID
+    try:
+        order_ref.update({
+            "employee": uid  # Assuming you store employee's UID in the 'employee' field
+        })
+        return {"message": "Employee assigned successfully"}
+    except Exception as e:
+        return {"error": str(e)}
+

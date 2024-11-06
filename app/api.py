@@ -9,7 +9,7 @@ from app.controller.user_controller import check_level_controller, get_top_level
 from app.controller.product_controller import check_product_in_in_progress_orders_controller, get_products_by_category_controller, lower_stock_controller, register_new_product, get_products, update_product_price, update_product_description, delete_product_by_id, get_product_by_id, update_product_categories, add_food_calories, update_stock_controller
 from app.controller.category_controller import delete_category_controller, get_all_categories, get_category_by_id_controller, register_new_category, update_category_name_controller, get_category_revenue_controller
 from app.controller.table_controller import associate_order_with_table_controller, clean_table_controller, close_table_controller, get_table_by_id_controller, get_tables_controller, update_table_status_controller
-from app.controller.order_controller import assign_order_to_table_controller, delete_order_items_controller, get_average_per_order_controller, get_average_per_person_controller, get_months_revenue, register_new_order, finalize_order_controller, get_orders, get_order_controller, add_order_items
+from app.controller.order_controller import assign_employee_to_order_controller, assign_order_to_table_controller, delete_order_items_controller, get_average_per_order_controller, get_average_per_person_controller, get_months_revenue, register_new_order, finalize_order_controller, get_orders, get_order_controller, add_order_items
 from app.controller.goal_controller import create_goal_controller, goals_controller
 from app.models.order_item import OrderItem
 from app.models.table import Table
@@ -254,3 +254,7 @@ async def create_goal(goal: Goal):
 async def goals(month: str, year: str):
     monthYear = month + '/' + year
     return goals_controller(monthYear)
+
+@router.put("/assign-order-employee/{orderId}/{uid}")
+async def assign_employee_to_order(orderId: int, uid: str):
+    return assign_employee_to_order_controller(orderId, uid)
