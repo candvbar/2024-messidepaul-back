@@ -13,17 +13,17 @@ def create_goal_controller(goal: Goal):
             raise HTTPException(status_code=400, detail="Description cannot be empty")
         
         # Ensure that expected_income is a positive integer
-        if goal.expected_income <= 0:
+        if goal.expectedIncome <= 0:
             raise HTTPException(status_code=400, detail="Expected income must be a positive number")
         
         # Handle category_id (if provided)
-        if goal.category_id is not None and not isinstance(goal.category_id, str):
+        if goal.categoryId is not None and not isinstance(goal.categoryId, str):
             raise HTTPException(status_code=400, detail="Category ID must be a string")
         
         # Check if the category exists only if category_id is provided
-        if goal.category_id:
-            if not category_exists(goal.category_id):
-                raise HTTPException(status_code=400, detail=f"Category with ID {goal.category_id} does not exist")
+        if goal.categoryId:
+            if not category_exists(goal.categoryId):
+                raise HTTPException(status_code=400, detail=f"Category with ID {goal.categoryId} does not exist")
         
         # Call the service function to save the goal
         goal_id = create_goal(goal)

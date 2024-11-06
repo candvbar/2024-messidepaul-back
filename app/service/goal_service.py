@@ -13,15 +13,15 @@ def create_goal(goal):
         # Convertir los datos del goal a un formato compatible
         goal_data = goal.dict(by_alias=True, exclude_unset=True)
 
-        if 'actual_income' not in goal_data:
-            goal_data['actual_income'] = 0
+        if 'actualIncome' not in goal_data:
+            goal_data['actualIncome'] = 0
 
         # Si la fecha ya es una cadena, no se hace nada
 
         # Handle category_id gracefully (make sure it's None or a valid string)
-        if goal_data.get('category_id') is None:
-            goal_data['category_id'] = None
-        elif not isinstance(goal_data.get('category_id'), str):
+        if goal_data.get('categoryId') is None:
+            goal_data['categoryId'] = None
+        elif not isinstance(goal_data.get('categoryId'), str):
             raise Exception("category_id must be a string or None")
 
         # Guardar el objetivo en Firestore

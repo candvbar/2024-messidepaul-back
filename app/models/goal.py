@@ -8,6 +8,6 @@ class Goal(BaseModel):
     color: str
     icon: str
     date: str
-    expected_income: int
-    actual_income: int
-    category_id: Optional[str]
+    expectedIncome: int
+    actualIncome: int
+    categoryId: Optional[str]
