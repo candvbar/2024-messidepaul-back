@@ -8,7 +8,6 @@ class Goal(BaseModel):
     color: str
     icon: str
     date: date
-    expected_income: int = Field(..., alias="expectedIncome")
-    actual_income: int = Field(..., alias="actualIncome")
-    category_id: Optional[int] = Field(None, alias="categoryId")
-    progress_value: Optional[int] = None
+    expected_income: int
+    actual_income: int
+    category_id: Optional[str]

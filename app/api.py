@@ -182,7 +182,7 @@ async def update_order_items(order_id: str, body: Dict[str, Any]):
     total = body.get("new_order_total", "")
     return add_order_items(order_id, new_order_items, total)
 
-@router.delete("/delete-order-item/")
+@router.delete("/delete-order-item/{order_id}")
 async def delete_order_item(order_id: str, order_items: List[str]):
     return delete_order_items_controller(order_id, order_items)
 

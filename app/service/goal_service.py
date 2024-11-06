@@ -1,4 +1,5 @@
 from calendar import monthrange
+from datetime import datetime
 from typing import Dict, List
 from app.db.firebase import db
 from app.models.goal import Goal
@@ -6,21 +7,32 @@ from fastapi import HTTPException
 
 def create_goal(goal):
     try:
-        # Get the next available ID
+        # Obtener el siguiente ID disponible
         next_id = get_next_goal_id()
 
-        # Prepare goal data for Firestore
+        # Convertir los datos del goal a un formato compatible
         goal_data = goal.dict(by_alias=True, exclude_unset=True)
-        
-        
-        # Save goal to Firestore with an auto-incremented ID
+
+        if 'actual_income' not in goal_data:
+            goal_data['actual_income'] = 0
+
+        # Verificar si la fecha está en formato datetime.date y convertirla a datetime
+        if isinstance(goal_data.get('date'), datetime.date):
+            # Convertir datetime.date a datetime.datetime con hora 00:00:00
+            goal_data['date'] = datetime.combine(goal_data['date'], datetime.min.time())
+
+        # Si la fecha ya es una cadena, no se hace nada
+        elif isinstance(goal_data.get('date'), str):
+            pass  # Deja la fecha como está si ya es una cadena válida
+
+        # Guardar el objetivo en Firestore
         new_goal_ref = db.collection('goals').document(str(next_id))
         new_goal_ref.set(goal_data)
 
         return next_id
     except Exception as e:
         return {"error": str(e)}
-
+        
 def get_next_goal_id():
     """
     Obtiene el próximo ID disponible en la colección 'products'.

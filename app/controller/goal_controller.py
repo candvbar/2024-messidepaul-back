@@ -1,6 +1,7 @@
 from app.models.goal import Goal
 from fastapi import HTTPException
 from app.service.goal_service import create_goal
+from app.service.category_service import category_exists
 
 def create_goal_controller(goal: Goal):
     try:
@@ -15,6 +16,12 @@ def create_goal_controller(goal: Goal):
         if goal.expected_income <= 0:
             raise HTTPException(status_code=400, detail="Expected income must be a positive number")
         
+        # Handle category_id (if provided)
+        if goal.category_id is not None:
+            # Check if category_id is valid by calling the category_exists function
+            if not category_exists(goal.category_id):
+                raise HTTPException(status_code=400, detail=f"Category with ID {goal.category_id} does not exist")
+        
         # Call the service function to save the goal
         goal_id = create_goal(goal)
         return {"message": "Goal created successfully", "id": goal_id}
@@ -23,4 +30,3 @@ def create_goal_controller(goal: Goal):
         raise e
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-
