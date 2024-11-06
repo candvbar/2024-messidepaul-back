@@ -72,11 +72,12 @@ def get_category_product_mapping():
             category_ids = product.get('category', '').split(',')  # Split categories string by comma
             
             for category_id in category_ids:
+                category_id = category_id.strip()  # Remove any leading/trailing whitespace
                 category_to_products[category_id].add(product_id)
 
         # Convert sets to comma-separated strings
         category_to_products = {category_id: ','.join(sorted(product_ids)) for category_id, product_ids in category_to_products.items()}
-
+        print("HOLAAAAAA", category_to_products)
         return category_to_products
 
     except Exception as e:
