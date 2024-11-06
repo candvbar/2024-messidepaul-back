@@ -1,6 +1,6 @@
 from app.models.goal import Goal
 from fastapi import HTTPException
-from app.service.goal_service import create_goal
+from app.service.goal_service import create_goal, goals
 from app.service.category_service import category_exists
 
 def create_goal_controller(goal: Goal):
@@ -29,6 +29,15 @@ def create_goal_controller(goal: Goal):
         goal_id = create_goal(goal)
         return {"message": "Goal created successfully", "id": goal_id}
     
+    except HTTPException as e:
+        raise e
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+def goals_controller(monthYear):
+    try:
+        response = goals(monthYear)
+        return response
     except HTTPException as e:
         raise e
     except Exception as e:

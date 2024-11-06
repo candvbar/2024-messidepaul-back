@@ -10,7 +10,7 @@ from app.controller.product_controller import check_product_in_in_progress_order
 from app.controller.category_controller import delete_category_controller, get_all_categories, get_category_by_id_controller, register_new_category, update_category_name_controller, get_category_revenue_controller
 from app.controller.table_controller import associate_order_with_table_controller, clean_table_controller, close_table_controller, get_table_by_id_controller, get_tables_controller, update_table_status_controller
 from app.controller.order_controller import assign_order_to_table_controller, delete_order_items_controller, get_average_per_order_controller, get_average_per_person_controller, get_months_revenue, register_new_order, finalize_order_controller, get_orders, get_order_controller, add_order_items
-from app.controller.goal_controller import create_goal_controller
+from app.controller.goal_controller import create_goal_controller, goals_controller
 from app.models.order_item import OrderItem
 from app.models.table import Table
 
@@ -249,3 +249,7 @@ async def reset_monthly_points():
 @router.post("/create-goal")
 async def create_goal(goal: Goal):
     return create_goal_controller(goal)
+
+@router.get("/goals")
+async def goals(monthYear: str):
+    return goals_controller(monthYear)
