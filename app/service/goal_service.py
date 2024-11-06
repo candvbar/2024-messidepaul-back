@@ -55,12 +55,14 @@ def get_next_goal_id():
         raise Exception(f"Error retrieving next ID from existing goals: {str(e)}")
 
 def goals(monthYear):
+    try:
+        goals_ref = db.collection('goals').where('date', '==', monthYear).stream()
+        goals = []
+        for goal in goals_ref:
+            gol = goal.to_dict()
+            gol['id'] = goal.id  # Añadir el ID a la respuesta
+            goals.append(gol)
+        return goals
+    except Exception as e:
+        return {"error": str(e)}
     
-    # Consulta la colección 'goals' donde el campo 'date' coincide con monthYear
-    goals_ref = db.collection('goals').where('date', '==', monthYear)
-    docs = goals_ref.stream()
-    
-    # Convertir los documentos a una lista de diccionarios
-    goals_list = [doc.to_dict() for doc in docs]
-    
-    return goals_list
