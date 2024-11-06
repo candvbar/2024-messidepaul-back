@@ -250,6 +250,7 @@ async def reset_monthly_points():
 async def create_goal(goal: Goal):
     return create_goal_controller(goal)
 
-@router.get("/goals/{monthYear}")
-async def goals(monthYear: str):
+@router.get("/goals/{month}/{year}")
+async def goals(month: str, year: str):
+    monthYear = month + '/' + year
     return goals_controller(monthYear)
