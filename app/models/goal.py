@@ -7,7 +7,7 @@ class Goal(BaseModel):
     description: str
     color: str
     icon: str
-    date: date
+    date: str
     expected_income: int
     actual_income: int
     category_id: Optional[str]

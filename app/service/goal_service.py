@@ -16,14 +16,13 @@ def create_goal(goal):
         if 'actual_income' not in goal_data:
             goal_data['actual_income'] = 0
 
-        # Verificar si la fecha está en formato datetime.date y convertirla a datetime
-        if isinstance(goal_data.get('date'), datetime.date):
-            # Convertir datetime.date a datetime.datetime con hora 00:00:00
-            goal_data['date'] = datetime.combine(goal_data['date'], datetime.min.time())
-
         # Si la fecha ya es una cadena, no se hace nada
-        elif isinstance(goal_data.get('date'), str):
-            pass  # Deja la fecha como está si ya es una cadena válida
+
+        # Handle category_id gracefully (make sure it's None or a valid string)
+        if goal_data.get('category_id') is None:
+            goal_data['category_id'] = None
+        elif not isinstance(goal_data.get('category_id'), str):
+            raise Exception("category_id must be a string or None")
 
         # Guardar el objetivo en Firestore
         new_goal_ref = db.collection('goals').document(str(next_id))
