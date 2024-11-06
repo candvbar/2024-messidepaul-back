@@ -6,7 +6,7 @@ from app.models.goal import Goal
 from fastapi import HTTPException
 from collections import defaultdict
 from datetime import datetime, timedelta
-
+from google.cloud import firestore
 from app.service.category_service import get_categories
 from app.service.product_service import products
 
@@ -85,58 +85,53 @@ def get_category_product_mapping():
 
 def goals(monthYear):
     try:
-        # Query the goals for the given month and year
+        # Parsear monthYear en fechas de inicio y fin
+        start_date = datetime.strptime(monthYear, "%m/%y")
+        end_date = start_date.replace(day=28) + timedelta(days=4)  # Mover al próximo mes
+        end_date = end_date - timedelta(days=end_date.day)  # Ajustar al último día del mes
+
+        # Consultar la colección 'goals' para el mes y año especificados
         goals_ref = db.collection('goals').where('date', '==', monthYear).stream()
         goals = []
-        category_products = get_category_product_mapping()  # Get the category-product mapping
+        category_products = get_category_product_mapping()  # Mapear categorías a productos
 
         for goal in goals_ref:
             gol = goal.to_dict()
-            gol['id'] = goal.id  # Add the goal ID to the response
+            gol['id'] = goal.id  # Incluir el ID del goal
             
-            # Initialize actualIncome for the goal
+            # Inicializar el seguimiento del ingreso
             actual_income = 0
-
-            # Check if categoryId is null or not
             category_id = gol.get('categoryId')
 
-            # Date range calculation
-            start_date = datetime.strptime(monthYear, "%m/%y")
-            end_date = start_date.replace(day=28) + timedelta(days=4)  # Get the last day of the month
-            end_date = end_date - timedelta(days=end_date.day)  # Adjust to the last day of the month
-
-            # Query finalized orders within the date range
+            # Consultar pedidos finalizados dentro del rango de fechas
             orders_ref = db.collection('orders')
-
-            orders_ref = orders_ref.where(field_path='status', op_string='==', value='FINALIZED')
-            orders_ref = orders_ref.where(field_path='date', op_string='>=', value=start_date.strftime("%Y-%m-%d"))
-            orders_ref = orders_ref.where(field_path='date', op_string='<=', value=end_date.strftime("%Y-%m-%d"))
-            orders_ref = orders_ref.stream()
+            orders_ref = orders_ref \
+                .where("status", "==", "FINALIZED") \
+                .where("date", ">=", start_date.strftime("%Y-%m-%d")) \
+                .where("date", "<=", end_date.strftime("%Y-%m-%d")) \
+                .stream()
 
             if category_id is None:
-                # If categoryId is null, sum all the order totals
+                # Sumar todos los totales de pedidos cuando no hay filtro de categoría
                 for order in orders_ref:
                     order_data = order.to_dict()
-                    actual_income += order_data.get('total', 0)
-
+                    actual_income += float(order_data.get('total', 0))
             else:
-                # If categoryId is not null, sum the income based on the product association
+                # Filtrar ingresos basado en la categoría-producto
                 for order in orders_ref:
                     order_data = order.to_dict()
                     for item in order_data.get('orderItems', []):
                         product_id = item.get('product_id')
                         if product_id:
-                            # Check if the product is associated with the goal's categoryId
+                            # Verificar si el producto pertenece a la categoría de la meta
                             associated_categories = category_products.get(str(category_id), "").split(',')
                             if str(product_id) in associated_categories:
-                                # Multiply the amount with the product price and sum it to actualIncome
-                                product_price = item.get('product_price', 0)  # Assuming price is available in the item
+                                # Calcular ingresos multiplicando cantidad y precio
+                                product_price = item.get('product_price', 0)
                                 amount = item.get('amount', 0)
-                                actual_income += amount * product_price
+                                actual_income += amount * float(product_price)
 
-            gol['actualIncome'] = actual_income  # Update goal with actualIncome
-
-            # Add goal to the list
+            gol['actualIncome'] = actual_income  # Actualizar la meta con el ingreso real
             goals.append(gol)
 
         return goals
