@@ -157,6 +157,30 @@ def add_items_to_order(order_id: str, new_items: List[OrderItem], total: str):
     
     return response
 
+def delete_order_items(order_id: str, order_items: List[str]):
+    # Obtener la orden existente
+    order_ref = db.collection('orders').document(order_id)
+    existing_order = order_ref.get()
+
+    if not existing_order.exists:
+        raise HTTPException(status_code=404, detail="Order not found")
+
+    # Obtener los orderItems de la orden
+    order_data = existing_order.to_dict()
+    current_order_items = order_data.get('orderItems', [])
+
+    # Filtrar los orderItems que no estén en la lista order_items
+    updated_order_items = [
+        item for item in current_order_items if item['product_id'] not in order_items
+    ]
+
+    # Actualizar la orden con los nuevos orderItems
+    order_ref.update({
+        'orderItems': updated_order_items
+    })
+
+    return {"message": "Order items deleted successfully"}
+
 def get_orders_by_status(status: str):
     """
     Retrieves all orders from the 'orders' collection with the specified status.

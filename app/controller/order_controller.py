@@ -1,5 +1,5 @@
 from typing import List
-from app.service.order_service import assign_order_to_table_service, create_order, finalize_order, get_months_revenue_service, get_order_by_id, get_all_orders, add_items_to_order, get_average_per_person_service, get_average_per_order_service
+from app.service.order_service import assign_order_to_table_service, create_order, delete_order_items, finalize_order, get_months_revenue_service, get_order_by_id, get_all_orders, add_items_to_order, get_average_per_person_service, get_average_per_order_service
 from app.models.order import Order
 from app.models.order import OrderItem
 from app.controller.table_controller import associate_order_with_table_controller
@@ -133,6 +133,29 @@ def add_order_items(order_id: str, new_order_items_data: List[dict], total: str)
         raise e
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+def delete_order_items_controller(order_id: str, order_items: List[str]):
+    try:
+        # Fetch the existing order
+        existing_order = get_order_by_id(order_id)
+        if not existing_order:
+            raise HTTPException(status_code=404, detail="Order not found")
+
+        # Check if the order status is 'IN PROGRESS'
+        if existing_order.get("status") != "INACTIVE":
+            raise HTTPException(status_code=400, detail="Cannot DELETE items to an order that is not in progress")
+
+        # Convertir los datos de la solicitud en instancias de OrderItem
+
+        # Actualizar la orden con los nuevos ítems (que ya incluyen viejos y nuevos)
+        response = delete_order_items(order_id, order_items)
+        return response
+    
+    except HTTPException as e:
+        raise e
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 
 def get_months_revenue():
     try:
