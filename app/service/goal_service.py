@@ -132,6 +132,9 @@ def goals(monthYear):
                                 actual_income += amount * float(product_price)
 
             gol['actualIncome'] = actual_income  # Actualizar la meta con el ingreso real
+            db.collection('goals').document(goal.id).update({
+                'actualIncome': actual_income
+            })
             goals.append(gol)
 
         return goals
