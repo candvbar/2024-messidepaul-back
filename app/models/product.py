@@ -5,7 +5,10 @@ from pydantic import BaseModel, Field
 class Product(BaseModel):
     id: int = Field(default=None)  # Make id optional
     name: str
-    price: Any  # Ensure product_price is non-negative
+    price: str  # Ensure product_price is non-negative
     description: str
     category: str
     calories: float
+    cost: Any
+    imageUrl: str
+    stock: str

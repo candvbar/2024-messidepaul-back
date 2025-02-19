@@ -16,9 +16,6 @@ def get_tables_service():
         return {"error": str(e)}
 
 def get_table_by_id(table_id: str):
-    """
-    Servicio para obtener una categoría por su ID.
-    """
     try:
         table_ref = db.collection('tables').document(table_id).get()
         if table_ref.exists:
@@ -26,7 +23,7 @@ def get_table_by_id(table_id: str):
             table['id'] = table_ref.id
             return table
         else:
-            return None  # Si la categoría no existe
+            return None 
     except Exception as e:
         return {"error": str(e)}
 
@@ -41,17 +38,15 @@ def update_table_status(table_id: str, new_status: str):
         except Exception as e:
             return {"error": str(e)}
 
-def associate_order_with_table(table_id: str, order_id: int):
+def associate_order_with_table(table_id: str, order_id: str):
     """
     Servicio para asociar un order ID con una tabla.
     """
-    print(table_id)
-    print(order_id)
     try:
         table_ref = db.collection('tables').document(table_id)
-        print(table_ref)
         if table_ref.get().exists:
-            table_ref.update({"order_id": order_id})  # Assuming order_id is a field in your table document
+            table_ref.update({"order_id": str(order_id)})
+            update_table_status(table_id, "BUSY")
             return {"message": "Order associated with table successfully"}
         else:
             return {"error": "Table not found"}
@@ -59,6 +54,27 @@ def associate_order_with_table(table_id: str, order_id: int):
         return {"error": str(e)}
 
 def close_table_service(table_id: str):
+    """
+    Update the status of the table to 'FREE' and set order_id to 0.
+    """
+    try:
+        table_ref = db.collection('tables').document(str(table_id))
+        table_doc = table_ref.get()
+
+        if not table_doc.exists:
+            raise HTTPException(status_code=404, detail="Table not found")
+
+        # Update the table
+        table_ref.update({
+            "status": "FINISHED",  # Set status to 'FREE'
+            "order_id": 0      # Set order_id to 0
+        })
+
+        return {"message": "Table closed successfully"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+def clean_table_service(table_id: str):
     """
     Update the status of the table to 'FREE' and set order_id to 0.
     """

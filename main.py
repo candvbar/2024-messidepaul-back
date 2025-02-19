@@ -10,6 +10,7 @@ origins = [
     "http://localhost:3000",
     "https://2024-messidepaul-front.vercel.app", 
     "https://2024-ranchoaparte-front-ivory.vercel.app"
+    "http://2024-huidobro-front.vercel.app"
 ]
 
 app.add_middleware(

@@ -1,4 +1,4 @@
-from app.service.product_service import check_product_name_exists, create_product, products, update_product_newprice, update_product_newdescription, delete_product, product_by_id, update_product_newcategories, add_calories
+from app.service.product_service import check_product_in_in_progress_orders, check_product_name_exists, create_product, get_products_by_category, lower_stock, products, update_product_newprice, update_product_newdescription, delete_product, product_by_id, update_product_newcategories, add_calories, update_stock
 from app.models.product import Product
 from app.service.category_service import check_multiple_categories_exist
 from fastapi import HTTPException
@@ -66,14 +66,12 @@ def update_product_price(product_id: str, new_price):
         if not isinstance(new_price, str):
             raise HTTPException(status_code=400, detail="Price must be a string")
 
-        # Intentamos convertir a float primero
-        new_price_float = float(new_price)
-
-        # Si necesitas una validación adicional para el int, puedes agregarla
-        if new_price_float.is_integer():
-            new_price = int(new_price_float)
-        else:
-            new_price = new_price_float
+        try:
+            price = float(new_price)  # Intentamos convertir a float
+            if price <= 0:
+                raise HTTPException(status_code=400, detail="Price cannot be negative or zero")
+        except ValueError:
+            raise HTTPException(status_code=400, detail="Price must be a number")
 
     except ValueError:
         # Si falla la conversión, lanzamos una excepción de validación
@@ -125,6 +123,34 @@ def get_product_by_id(product_id: str):
 def add_food_calories(product_id: str, calories: float):
     try:
         response = add_calories(product_id, calories)
+        return response
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+def get_products_by_category_controller(category_id: str):
+    try:
+        response = get_products_by_category(category_id)
+        return response
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+def check_product_in_in_progress_orders_controller():
+    try:
+        response = check_product_in_in_progress_orders()
+        return response
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+def update_stock_controller(product_id, stock):
+    try: 
+        response = update_stock(product_id, stock)
+        return response
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+def lower_stock_controller(product_id, stock):
+    try: 
+        response = lower_stock(product_id, stock)
         return response
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

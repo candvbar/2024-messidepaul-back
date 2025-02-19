@@ -148,3 +148,95 @@ def check_product_name_exists(product_name: str):
         return False
     except Exception as e:
         raise Exception(f"Error checking if product name exists: {str(e)}")
+
+def get_products_by_category(category_ids_str: str):
+    try:
+        # Reference to the 'products' collection
+        category_ids = category_ids_str.split(', ')
+        products_ref = db.collection('products')
+        products = products_ref.stream()
+
+        # Filter products by the provided category IDs
+        filtered_products = []
+        for product in products:
+            product_data = product.to_dict()
+            
+            # Add the Firestore document ID to the product data
+            product_data['id'] = product.id  
+            
+            # Split the product's categories and check if any match the input category_ids
+            product_categories = product_data['category'].split(', ')
+            if any(category_id in product_categories for category_id in category_ids):
+                filtered_products.append(product_data)
+
+        # Raise an exception if no products are found for the given categories
+        if not filtered_products:
+            raise Exception(f"No products found for categories {', '.join(category_ids)}")
+
+        return filtered_products
+
+    except Exception as e:
+        raise Exception(f"Error retrieving products by categories: {str(e)}")
+def check_product_in_in_progress_orders():
+    """
+    Retrieves all products that are present in any 'IN PROGRESS' orders.
+    """
+    try:
+        # Referencia a la colección 'orders' en Firestore
+        orders_ref = db.collection('orders')
+        
+        # Consulta para obtener todas las órdenes que están 'IN PROGRESS'
+        in_progress_orders = orders_ref.where("status", "==", "IN PROGRESS").stream()
+
+        # Lista para almacenar todos los productos de las órdenes "IN PROGRESS"
+        products_in_orders = []
+
+        # Recorremos cada orden en progreso y obtenemos los productos de los orderItems
+        for order in in_progress_orders:
+            order_data = order.to_dict()
+            for item in order_data.get('orderItems', []):
+                products_in_orders.append(item)
+
+        # Verificamos si no se encontró ningún producto
+        if not products_in_orders:
+            raise Exception("No products found in 'IN PROGRESS' orders")
+
+        return products_in_orders
+
+    except Exception as e:
+        raise Exception(f"Error retrieving products from 'IN PROGRESS' orders: {str(e)}")
+
+def update_stock(product_id: str, new_stock: str):
+    try:
+        product_ref = db.collection('products').document(product_id)
+        
+        # Retrieve the current stock and convert to integer
+        current_stock = int(product_ref.get().to_dict()["stock"])
+        
+        # Convert new_stock to integer and add to current stock
+        updated_stock = current_stock + int(new_stock)
+        
+        # Update the stock in the database
+        product_ref.update({"stock": str(updated_stock)})
+        
+        return {"message": "Product stock updated successfully"}
+    except Exception as e:
+        return {"error": str(e)}
+
+    
+def lower_stock(product_id: str, new_stock: str):
+    try:
+        product_ref = db.collection('products').document(product_id)
+        
+        # Retrieve the current stock and convert to integer
+        current_stock = int(product_ref.get().to_dict()["stock"])
+        
+        # Convert new_stock to integer and add to current stock
+        updated_stock = current_stock - int(new_stock)
+        
+        # Update the stock in the database
+        product_ref.update({"stock": str(updated_stock)})
+        
+        return {"message": "Product stock updated successfully"}
+    except Exception as e:
+        return {"error": str(e)}
